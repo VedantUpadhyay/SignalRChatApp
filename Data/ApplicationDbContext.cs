@@ -15,5 +15,9 @@ namespace SignalRChatApp.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+        public DbSet<Friends> Friends { get; set; }
+
     }
+
 }

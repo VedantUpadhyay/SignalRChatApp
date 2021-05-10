@@ -1,11 +1,56 @@
-﻿@{
+﻿@model List<ApplicationUser>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
     ViewData["Title"] = "Home Page";
 }
-
 <!--Main Container
     Left Pane holds the Friends
     Right Pane(bigger width holds the selected Friends.)
     -->
 <div>
-    
+    <div class="row">
+        <!--User Pane-->
+        <div id="friends-pane" class="col-sm-4" style="min-height:100vh">
+            <!--Friends List-->
+            <div id="friends-list">
+                <!--
+                @{
+                    var userImg = @"/Images/" + User.Identity.Name + ".jpg";
+                }
+                <img src=@userImg class="rounded-circle" width="30%" height="35%"/>
+                    -->
+                <input id="userSearch" type="text" placeholder="Search a User"><span><i class="fas fa-search icon"></i></span>
+                <ul id="user-search-list" class="list-group">
+                </ul>
+                <h3>Friends</h3>
+
+                <div>
+                    <ul class="list-group">
+                        @foreach (var item in Model)
+                        {
+
+                            <div class="bg-light">
+                                <h5><img class="rounded-circle" src=@item.ProfileImage width="25%" height="30%">@item.ChatName</h5>
+                            </div>
+
+                        }
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!--Chat Pane-->
+        <div id="chat-pane" class="col-xl-8" style="min-height:100vh">
+
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/index.js" defer></script>
+}

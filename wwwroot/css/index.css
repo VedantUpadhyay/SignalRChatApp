@@ -1,0 +1,48 @@
+﻿* {
+    margin:0;
+    padding:0;
+    font-family: 'Segoe UI';
+}
+
+#friends-list h3 {
+    margin-top:1rem;
+    color: darkslateblue;
+    /*border-bottom: 1px solid black;*/
+}
+
+#user-search-list {
+    position:absolute;
+}
+
+#friends-list i {
+    position: absolute;
+    right: 22px;
+    top: 20px;
+}
+
+
+#userSearch {
+    position: relative;
+    background: none;
+    border: none;
+    border-bottom: 1px solid black;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+*:focus {
+    outline: none;
+}
+
+#friends-pane {
+    background: linear-gradient(to right, #ccffff 0%, #ffffff 100%);
+    border: 1px solid;
+}
+
+#chat-pane {
+    background: #C9D6FF; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #E2E2E2, #C9D6FF); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #E2E2E2, #C9D6FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    border: 1px solid;
+}
