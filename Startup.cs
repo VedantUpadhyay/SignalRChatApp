@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SignalRChatApp.Data;
+using SignalRChatApp.Hubs;
 using SignalRChatApp.Models;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace SignalRChatApp
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +68,7 @@ namespace SignalRChatApp
                     name: "default",
                     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<MainHub>("/hub");
             });
         }
     }

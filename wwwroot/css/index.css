@@ -4,14 +4,90 @@
     font-family: 'Segoe UI';
 }
 
+.friend-card {
+    position: relative;
+    border-radius: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    height:max-content;
+}
+
+.friend-card:hover {
+    background-color:aqua;
+}
+
+.header {
+    width:100%;
+  padding: 10px 16px;
+  background: #555;
+  color: #f1f1f1;
+}
+
+/* Page content */
+.content {
+  padding: 16px;
+}
+
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+  padding-top: 102px;
+}
+
+#friendChatName {
+    position:sticky;
+    top:0;
+    left:0;
+    background-color:aliceblue;
+    width:100%;
+    border-bottom:1px solid dimgrey;
+}
+
+#friendChatName h4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 0;
+    width: 100%;
+    text-transform: uppercase;
+    color: dimgrey;
+}
+
+.friend-card img {
+    margin-right: 0.66rem;
+}
+
+.friend-card h5 {
+    height:100%;
+    width:100%;
+    position:inherit;
+}
+
+
 #friends-list h3 {
-    margin-top:1rem;
+    margin-top: 1rem;
     color: darkslateblue;
     /*border-bottom: 1px solid black;*/
 }
 
 #user-search-list {
     position:absolute;
+}
+
+#friends-list {
+    position:sticky;
+    top:0;
+}
+
+#main-chats-div {
+    margin-top:1rem;
 }
 
 #friends-list i {
@@ -30,8 +106,15 @@
     margin-top: 1rem;
 }
 
-*:focus {
+*::selection,:hover {
     outline: none;
+}
+
+#sendMessageArea {
+   position:absolute;
+   bottom:0;
+   height:10%;
+   left:0;
 }
 
 #friends-pane {
@@ -45,4 +128,5 @@
     background: linear-gradient(to right, #E2E2E2, #C9D6FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
     border: 1px solid;
+    position:relative;
 }

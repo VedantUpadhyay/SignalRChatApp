@@ -33,10 +33,9 @@
                         @foreach (var item in Model)
                         {
 
-                            <div class="bg-light">
-                                <h5><img class="rounded-circle" src=@item.ProfileImage width="25%" height="30%">@item.ChatName</h5>
+                            <div style="height:7rem;position:relative" class="friend-card list-group-item bg-light" onclick="openChat('@item.ChatName','@item.Email')">
+                            <img style="position:inherit" class="rounded-circle" src=@item.ProfileImage width="30%" height="100%"><span>@item.ChatName</span>
                             </div>
-
                         }
                     </ul>
                 </div>
@@ -52,5 +51,6 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/index.js" defer></script>
 }

@@ -1,4 +1,19 @@
-﻿$().ready(function () {
+﻿"use strict";
+
+
+$().ready(function () {
+    //Establishing Hub Connection
+    var connection = new signalR.HubConnectionBuilder().withUrl("/hub").build();
+
+    connection.start().then(function () {
+        console.log("Connection established!!");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+
+
    // $("#user-search-list").hide();
 
     $("#userSearch").keyup(function (event) {
@@ -83,4 +98,39 @@ function fillDataList(usersList) {
         });
     });
     
+}
+
+
+
+//All ::Chatsettings here
+function openChat(chatName, chatEmail) {
+    
+    $("#chat-pane").empty();
+    var stickyHeader = ` <div class="header" id="myHeader">
+  <h2>${chatName}</h2>
+</div>`;
+    var chatsDiv = `<div id='main-chats-div'><h3>hey</h3></div>`;
+
+    var messageTextArea = `<div contenteditable="true" id="sendMessageArea" class="form-control" placeholder="send a text.."></div>`;
+
+    $("#chat-pane").append(stickyHeader);
+    $("#chat-pane").append(chatsDiv);
+    $("#chat-pane").append(messageTextArea);
+
+    window.onscroll = function () { myFunction() };
+
+    // Get the header
+    var header = document.getElementById("myHeader");
+
+    // Get the offset position of the navbar
+    var sticky = header.offsetTop;
+
+    // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+    function myFunction() {
+        if (window.pageYOffset > sticky) {
+            header.classList.add("sticky");
+        } else {
+            header.classList.remove("sticky");
+        }
+    }
 }
