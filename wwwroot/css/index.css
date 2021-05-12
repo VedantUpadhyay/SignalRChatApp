@@ -18,7 +18,7 @@
 }
 
 .header {
-    width:100%;
+  width:100%;
   padding: 10px 16px;
   background: #555;
   color: #f1f1f1;
@@ -31,10 +31,10 @@
 
 /* The sticky class is added to the header with JS when it reaches its scroll position */
 .sticky {
-  position: fixed;
-  top: 0;
-  left:0;
-  width: 100%
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%
 }
 
 /* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
@@ -106,15 +106,35 @@
     margin-top: 1rem;
 }
 
-*::selection,:hover {
+*:hover {
     outline: none;
 }
 
+#sendMessageArea textarea {
+    width:100%;
+    border:none;
+    height:100%;
+}
+
+#sendMessageArea span {
+    cursor:pointer;
+    font-size:x-large;
+    position:absolute;
+    z-index:100;
+    right:0;
+}
+
+#sendMessageArea * {
+    display: inline;
+}
+
 #sendMessageArea {
-   position:absolute;
-   bottom:0;
-   height:10%;
-   left:0;
+    width:100%;
+    position: sticky;
+    top:90%;
+    bottom: 0;
+    height: 10%;
+    left: 0;
 }
 
 #friends-pane {
@@ -123,6 +143,7 @@
 }
 
 #chat-pane {
+    width:100%;
     background: #C9D6FF; /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #E2E2E2, #C9D6FF); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #E2E2E2, #C9D6FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
