@@ -15,6 +15,7 @@ $().ready(function () {
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
+        document.getElementById("notifySound").play();
         let currentChatUser = $("#currentChatUser").val();
 
         let recvDiv = document.createElement("div");

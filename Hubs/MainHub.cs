@@ -42,17 +42,21 @@ namespace SignalRChatApp.Hubs
             var recvId = _userManager.FindByEmailAsync(RecvUser).Result.Id;
             try
             {
+                var messageModel = new Messages
+                {
+                    SenderId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    SentTime = DateTime.Now.ToLocalTime().ToString(),
+                    ReceiverId = recvId,
+                    Text = message,
+                    IsPending = true
+                };
+
+                _db.Messages.Add(messageModel);
+                _db.SaveChanges();
                 //recv is online..
                 if (_onlineUsersManager.onlineUsers.Contains(RecvUser))
                 {
-                    var messageModel = new Messages
-                    {
-                        SenderId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                        SentTime = DateTime.Now.ToLocalTime().ToString(),
-                        ReceiverId = recvId,
-                        
-
-                    };
+                    
 
 
                     Clients.User(recvId).SendAsync("ReceiveMessage", senderEmail,message);
