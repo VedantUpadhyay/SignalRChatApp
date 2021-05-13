@@ -28,12 +28,23 @@ namespace SignalRChatApp.Hubs
 
         public async override Task OnConnectedAsync()
         {
+            var currentLoggedUser = await _db.ApplicationUsers.FindAsync(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            currentLoggedUser.IsOnline = true;
+            await _db.SaveChangesAsync();
+
             _onlineUsersManager.onlineUsers.Add(Context.User.Identity.Name);
+            await Clients.AllExcept(Context.ConnectionId).SendAsync("ChangeActiveStatus", Context.User.Identity.Name, "online");
         }
 
         public override async Task OnDisconnectedAsync(Exception ex = null)
         {
+
+            var currentLoggedUser = await _db.ApplicationUsers.FindAsync(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            currentLoggedUser.IsOnline = false;
+            await _db.SaveChangesAsync();
+
             _onlineUsersManager.onlineUsers.Remove(Context.User.Identity.Name);
+            await Clients.All.SendAsync("ChangeActiveStatus", Context.User.Identity.Name, "offline");
         }
 
         public string SendMessage(string RecvUser,string message)

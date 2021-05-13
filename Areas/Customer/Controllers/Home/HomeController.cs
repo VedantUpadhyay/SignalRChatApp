@@ -10,6 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Text.Json;
 
 namespace SignalRChatApp.Controllers
 {
@@ -20,14 +24,37 @@ namespace SignalRChatApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly OnlineUsers _onlineUsersManager;
 
         public HomeController(ILogger<HomeController> logger,
             ApplicationDbContext db,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            OnlineUsers onlineUsersManager)
         {
             _logger = logger;
             _db = db;
             _userManager = userManager;
+            _onlineUsersManager = onlineUsersManager;
+
+        }
+
+        [HttpGet]
+        public async Task GetOnlineUsers()
+        {
+            Response.Headers.Add("Content-Type", "text/event-stream");
+            var onlineUsers = _onlineUsersManager.onlineUsers;
+
+            for (int i = 0; i < 5; i--)
+            {
+                var msg = JsonSerializer.Serialize(onlineUsers);
+                var bytes = Encoding.ASCII.GetBytes($"data: {msg}\n\n");
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                await HttpContext.Response.Body.FlushAsync();
+                Response.Body.Close();
+
+            }
+
         }
 
         public IActionResult Index()

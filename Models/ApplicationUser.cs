@@ -16,5 +16,7 @@ namespace SignalRChatApp.Models
         public string ChatName { get; set; }
 
         public string ProfileImage { get; set; }
+
+        public bool IsOnline { get; set; }
     }
 }

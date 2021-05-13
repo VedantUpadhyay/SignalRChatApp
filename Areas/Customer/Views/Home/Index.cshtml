@@ -32,10 +32,23 @@
                     <ul class="list-group">
                         @foreach (var item in Model)
                         {
-                            <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
-                                <img class="rounded-circle" width="25%" height="100%" src="@item.ProfileImage" />
-                                @item.ChatName
-                            </li>
+                        <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
+                            <img style="position:relative;"  class="rounded-circle" width="25%" height="100%" src="@item.ProfileImage" />
+                            @{ 
+                                string statusClass = string.Empty;
+
+                                if (item.IsOnline)
+                                {
+                                    statusClass = "status-circle status-online";
+                                }
+                                else {
+                                    statusClass = "status-circle";
+                                }
+                            }
+                            <span id="@item.Email.Replace("@","_")" class="@statusClass">
+                            </span>
+                            @item.ChatName
+                        </li>
                         }
                     </ul>
                 </div>

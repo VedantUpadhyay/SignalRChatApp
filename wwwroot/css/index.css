@@ -6,6 +6,7 @@
 
 
 .friend-card {
+    position:relative;
     list-style: none;
     color: darkblue;
     margin: 1%;
@@ -117,7 +118,23 @@
     height:max-content;
 }
 
+.status-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: red;
+    border: 2px solid white;
+    top:0;
+    left: 0;
+    position: absolute;
+}
+
+.status-online {
+    background-color: lawngreen;
+}
+
 .recv-msg {
+    margin-left: 0.5rem;
     margin-bottom: 0.33rem;
     padding: 0.33rem;
     height: max-content;

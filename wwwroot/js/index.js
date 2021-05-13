@@ -1,16 +1,32 @@
 ﻿"use strict";
 
+
 var connection;
 
 $().ready(function () {
+
     //Establishing Hub Connection
     connection = new signalR.HubConnectionBuilder().withUrl("/hub").build();
 
     connection.start().then(function () {
         console.log("Connection established!!");
+       // getOnlineUsers();
     }).catch(function (err) {
         return console.error(err.toString());
     });
+
+    connection.on("ChangeActiveStatus", function (userEmail, status) {
+        userEmail = userEmail.replace("@", "_");
+        console.log(userEmail, " " ,typeof userEmail);
+
+        if (status == "online") {
+            document.getElementById(userEmail).classList.add("status-online");
+        }
+        else if(status == "offline") {
+            document.getElementById(userEmail).classList.remove("status-online");
+        }
+    });
+
 
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
@@ -206,4 +222,22 @@ function sendMessage(chatEmail) {
 
         $(".messageInput").val("");
     });
+} 
+
+async function getOnlineUsers() {
+    var source = new EventSource('/Customer/Home/GetOnlineUsers');
+
+    source.onmessage = function (event) {
+        console.log('onmessage: ' + event.data);
+    };
+
+    source.onopen = function (event) {
+        console.log('onopen');
+    };
+
+    source.onerror = function (event) {
+        console.log('onerror');
+        console.log(event);
+        source.close();
+    }
 }
