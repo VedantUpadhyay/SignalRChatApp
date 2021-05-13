@@ -185,7 +185,11 @@ function openChat(chatName, chatEmail) {
 function sendMessage(chatEmail) {
 
     var messageToSend = $(".messageInput").val();
-    
+
+    if (messageToSend === "") {
+        return;
+    }
+
     connection.invoke("SendMessage", chatEmail, messageToSend).then(function (response) {
         let chatPane = $("#chat-pane");
 
@@ -193,9 +197,11 @@ function sendMessage(chatEmail) {
         sentMessageDiv.textContent = messageToSend;
         sentMessageDiv.classList.add("sent-msg");
         sentMessageDiv.classList.add("bg-success");
-        sentMessageDiv.classList.add("rounded-sm");
+        sentMessageDiv.classList.add("rounded");
 
         chatPane.append(sentMessageDiv);
+
+        chatPane.scrollTop(chatPane.prop("scrollHeight"));
 
         $(".messageInput").val("");
     });

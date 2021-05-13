@@ -15,6 +15,10 @@ namespace SignalRChatApp.Models
         public string SenderId { get; set; }
 
         [Required]
+        [MaxLength(350)]
+        public string Text { get; set; }
+
+        [Required]
         public string ReceiverId { get; set; }
 
         [Required]

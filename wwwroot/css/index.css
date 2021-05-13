@@ -67,7 +67,7 @@
 }
 
 #chat-pane {
-    min-width: 50vw;
+    min-width: 55vw;
     max-width: 75vw;
     position: relative;
     /*padding: 1rem;*/
@@ -77,6 +77,9 @@
     background: linear-gradient(to right, #E2E2E2, #C9D6FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
     border: 1px solid;
+    overflow-y: scroll;
+    padding-bottom: 3.4rem;
+    border-bottom: 1vh #ccc;
 }
 
 .chat-header {
@@ -98,9 +101,9 @@
     position: fixed;
     z-index: 111;
     height: 3.4rem;
-    bottom: 27px;
-    left: 40vw;
-    width: 50%;
+    bottom: 30px;
+    left: 35vw;
+    width: 53%;
     display: inline;
 }
 

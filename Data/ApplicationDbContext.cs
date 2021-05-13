@@ -18,6 +18,8 @@ namespace SignalRChatApp.Data
 
         public DbSet<Friends> Friends { get; set; }
 
+        public DbSet<Messages> Messages { get; set; }
+
     }
 
 }
