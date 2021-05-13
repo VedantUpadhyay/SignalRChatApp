@@ -84,7 +84,9 @@ namespace SignalRChatApp.Controllers
                 var friendId = _userManager.FindByEmailAsync(friendEmail).Result.Id;
 
                 //check if he is already my friend
-                var friendsListCount = _db.Friends.Where(u => u.MyId == myUserId).Where(u => u.FriendId == friendId).ToList().Count;
+                var friendsListCount = _db.Friends.Where(
+                    u => u.MyId == myUserId && u.FriendId == friendId || (u.FriendId == myUserId && u.MyId == friendId)
+                    ).ToList().Count;
 
                 if (friendsListCount > 0)
                 {

@@ -27,11 +27,11 @@ a {
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+  /*font-size: 14px;*/
 }
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    /*font-size: 16px;*/
   }
 }
 
@@ -60,7 +60,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+ /* margin-bottom: 60px;*/
 }
 .footer {
   position: absolute;

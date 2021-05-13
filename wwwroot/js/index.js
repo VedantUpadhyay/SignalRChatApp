@@ -14,32 +14,23 @@ $().ready(function () {
 
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
-        var currentChatUser = $("#currentUserEmail").val();
-        var recvMessageDiv = document.createElement("div");
-        recvMessageDiv.style.borderTopRightRadius = "10px";
-        recvMessageDiv.style.width = "50%";
-        recvMessageDiv.style.width = "100px";
-        recvMessageDiv.style.fontSize = "larger";
-        recvMessageDiv.style.textAlign = "left";
-        recvMessageDiv.style.marginBottom = "2px";
-        recvMessageDiv.classList.add("bg-primary");
-        recvMessageDiv.textContent = message;
+        console.log("Received..");
+        let currentChatUser = $("#currentChatUser").val();
+
+        let recvDiv = document.createElement("div");
+        recvDiv.textContent = message;
+        recvDiv.classList.add("bg-primary");
+        recvDiv.classList.add("recv-msg");
+        recvDiv.classList.add("rounded");
 
         if (currentChatUser !== undefined) {
             if (currentChatUser === senderEmail) {
-                $("#chat-pane").append(recvMessageDiv);
+                $("#chat-pane").append(recvDiv);
             }
         }
 
-        
-
-        
-
     });
 
-
-
-   // $("#user-search-list").hide();
 
     $("#userSearch").keyup(function (event) {
         var searchContent = $("#userSearch").val();
@@ -64,6 +55,8 @@ $().ready(function () {
         }
     });
 
+    
+
     $('body').click(function (e) {
         if ($(e.target).closest('#user-search-list').length === 0) {
             $("#userSearch").val("");
@@ -71,6 +64,14 @@ $().ready(function () {
             $("#user-search-list").hide();
         }
     });
+});
+
+$(window).keydown(function (e) {
+    if (e.keyCode == 27) {
+        $("#userSearch").val("");
+        $("#user-search-list").empty();
+        $("#user-search-list").hide();
+    }
 });
 
 function fillDataList(usersList) {
@@ -113,7 +114,9 @@ function fillDataList(usersList) {
                     }
                 });
             }
-
+            $("#userSearch").val("");
+            $("#user-search-list").empty();
+            $("#user-search-list").hide();
         });
 
 
@@ -129,79 +132,71 @@ function fillDataList(usersList) {
 
 //All ::Chatsettings here
 function openChat(chatName, chatEmail) {
+    let chatPane = $("#chat-pane");
+    //emptying the chat-pane
+    chatPane.empty();
+
+    let chatHeader = document.createElement("div");
+    chatHeader.classList.add("chat-header");
+    chatHeader.textContent = `${chatName}`;
+    let hiddenCurrentChat = document.createElement("input");
+    hiddenCurrentChat.type = "hidden";
+    hiddenCurrentChat.setAttribute("value", chatEmail);
+    hiddenCurrentChat.setAttribute("id", "currentChatUser");
+    chatHeader.append(hiddenCurrentChat);
+
+    chatPane.append(chatHeader);
+
+    let sendAreaDiv = document.createElement("div");
+    sendAreaDiv.classList.add("sendAreaDiv");
+
+    let messageInput = document.createElement("input");
+    messageInput.type = "text";
+    messageInput.placeholder = "send a text..";
+    messageInput.classList.add("rounded-pill");
+    messageInput.classList.add("messageInput");
+
+    let sendButton = document.createElement("span");
+    sendButton.classList.add("rounded");
+    let sendFA = document.createElement("i");
+    sendFA.classList.add("fas");
+    sendFA.classList.add("fa-paper-plane");
+    sendButton.appendChild(sendFA);
+    sendButton.classList.add("sendButton");
+
+    sendButton.onclick = function (e) {
+        sendMessage(chatEmail);
+    }
+
+    sendAreaDiv.appendChild(messageInput);
+    sendAreaDiv.appendChild(sendButton);
+
+   
+    chatPane.append(sendAreaDiv);
+    messageInput.focus();
+    messageInput.onkeypress = function (e) {
+        if (e.keyCode == 13) {
+            sendMessage(chatEmail);
+        }
+    }
+
+}
+
+function sendMessage(chatEmail) {
+
+    var messageToSend = $(".messageInput").val();
     
-    $("#chat-pane").empty();
-    var stickyHeader = ` <div class="header" id="myHeader">
-  <h2>${chatName}</h2>
-    <input id="currentUserEmail" type='hidden' value="${chatEmail}"/>
-</div>`;
-    var chatsDiv = `<div id='main-chats-div'></div>`;
+    connection.invoke("SendMessage", chatEmail, messageToSend).then(function (response) {
+        let chatPane = $("#chat-pane");
 
-    var messageTextArea = `<div id="sendMessageArea"><textarea contenteditable="true" id="messageBox"  class="form-control" placeholder="send a text.."></textarea><span><i onclick="sendMessage()" id="sendBtn" class="fas fa-paper-plane"></i ></span></div>`;
+        let sentMessageDiv = document.createElement("div");
+        sentMessageDiv.textContent = messageToSend;
+        sentMessageDiv.classList.add("sent-msg");
+        sentMessageDiv.classList.add("bg-success");
+        sentMessageDiv.classList.add("rounded-sm");
 
-    $("#chat-pane").append(stickyHeader);
-    $("#chat-pane").append(chatsDiv);
-    $("#chat-pane").append(messageTextArea);
-    $("#messageBox").focus();
+        chatPane.append(sentMessageDiv);
 
-    $("#sendMessageArea").keyup(function (event) {
-        if (event.keyCode == 13) {
-            console.log("Enter pressed.");
-            sendMessage();
-            $("#messageBox").val("");
-        }
-    });
-
-    $("#chat-pane").scroll = function () { myFunction() };
-
-    // Get the header
-    var header = document.getElementById("myHeader");
-
-    // Get the offset position of the navbar
-    var sticky = header.offsetTop;
-
-    // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
-    function myFunction() {
-        if (window.pageYOffset > sticky) {
-            header.classList.add("sticky");
-        } else {
-            header.classList.remove("sticky");
-        }
-    }
-}
-
-//Sending message
-function sendMessage() {
-    console.log("Sending..");
-    var messageToSend = $("#messageBox").val();
-    var currentChatUser = $("#currentUserEmail").val();
-
-    if (messageToSend == "") {
-        return;
-    }
-
-    $("#messageBox").val("");
-    $("#messageBox").focus();
-    connection.invoke("SendMessage", currentChatUser, messageToSend).then(function (response) {
-
-        if (response !== undefined) {
-            var recvMessageDiv = document.createElement("div");
-            recvMessageDiv.style.borderTopRightRadius = "10px";
-            recvMessageDiv.style.width = "35%";
-            recvMessageDiv.style.height = "fit-content()";
-            recvMessageDiv.style.marginLeft = "auto";
-            recvMessageDiv.style.marginRight = "0";
-            recvMessageDiv.style.fontSize = "larger";
-            recvMessageDiv.style.padding = "1%";
-            recvMessageDiv.style.textAlign = "left";
-            recvMessageDiv.style.marginBottom = "2px";
-            recvMessageDiv.classList.add("bg-success");
-            recvMessageDiv.textContent = messageToSend;
-
-            $("#chat-pane").append(recvMessageDiv);
-        }
-
-        console.log(response);
+        $(".messageInput").val("");
     });
 }
-

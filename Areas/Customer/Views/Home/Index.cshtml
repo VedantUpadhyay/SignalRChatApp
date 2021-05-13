@@ -12,17 +12,17 @@
     Right Pane(bigger width holds the selected Friends.)
     -->
 <div>
-    <div class="row" >
+    <div style="display:inline-flex; height: 85vh;overflow:auto">
         <!--User Pane-->
-        <div id="friends-pane" class="col-sm-4" style="min-height:70vh;">
+        <div id="friends-pane">
             <!--Friends List-->
             <div id="friends-list">
                 <!--
-                @{
-                    var userImg = @"/Images/" + User.Identity.Name + ".jpg";
-                }
-                <img src=@userImg class="rounded-circle" width="30%" height="35%"/>
-                    -->
+            @{
+                var userImg = @"/Images/" + User.Identity.Name + ".jpg";
+            }
+            <img src=@userImg class="rounded-circle" width="30%" height="35%"/>
+                -->
                 <input id="userSearch" type="text" placeholder="Search a User"><span><i class="fas fa-search icon"></i></span>
                 <ul id="user-search-list" class="list-group">
                 </ul>
@@ -32,10 +32,10 @@
                     <ul class="list-group">
                         @foreach (var item in Model)
                         {
-
-                            <div style="height:7rem;position:relative" class="friend-card list-group-item bg-light" onclick="openChat('@item.ChatName','@item.Email')">
-                            <img style="position:inherit" class="rounded-circle" src=@item.ProfileImage width="30%" height="100%"><span>@item.ChatName</span>
-                            </div>
+                            <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
+                                <img class="rounded-circle" width="25%" height="100%" src="@item.ProfileImage" />
+                                @item.ChatName
+                            </li>
                         }
                     </ul>
                 </div>
@@ -44,7 +44,7 @@
         </div>
 
         <!--Chat Pane-->
-        <div id="chat-pane" class="col-xl-8" style="min-height: 70vh;overflow:auto;max-height:80vh" >
+        <div id="chat-pane">
 
         </div>
     </div>
