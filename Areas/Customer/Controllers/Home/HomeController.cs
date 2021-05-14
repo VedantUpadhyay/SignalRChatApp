@@ -92,6 +92,44 @@ namespace SignalRChatApp.Controllers
 
         #region AJAX Calls
 
+        [HttpGet]
+        public async Task<IActionResult> GetMyMessages(string senderEmail)
+        {
+            string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ApplicationUser sender = await _userManager.FindByNameAsync(senderEmail);
+
+            string senderId = sender.Id;
+
+            var messages = _db.Messages
+                .Where(u => u.ReceiverId == myId && u.SenderId == senderId || (u.SenderId == myId && u.ReceiverId == senderId))
+                .Select(x => new
+                {
+                    senderEmail = _userManager.FindByIdAsync(x.SenderId).Result.Email,
+                    recvEmail = _userManager.FindByIdAsync(x.ReceiverId).Result.Email,
+                    sentTime = x.SentTime,
+                    messageContent = x.Text
+                })
+                .ToList();
+                
+                
+
+            if (messages.Count > 0)
+            {
+                return Json(new
+                {
+                    success = true,
+                    messages = messages
+                });
+            }
+            return Json(new
+            {
+                success = false,
+                context = "No messages.."
+            });
+        }
+
+
         public IActionResult GetMatchingUsers(string userName)
         {
             return Json(new

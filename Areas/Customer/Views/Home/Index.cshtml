@@ -33,7 +33,7 @@
                         @foreach (var item in Model)
                         {
                         <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
-                            <img style="position:relative;"  class="rounded-circle" width="25%" height="100%" src="@item.ProfileImage" />
+                            <img style="position:relative;"  class="rounded-circle" width="25%" src="@item.ProfileImage" />
                             @{ 
                                 string statusClass = string.Empty;
 
@@ -66,6 +66,10 @@
 <audio id="notifySound" controls="controls" hidden>
     <source src="/sms_notification.mp3" type="audio/mp3" />
 </audio>
+
+<div class="modal">
+    <h1>Loading Messages..</h1>
+</div>
 
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>

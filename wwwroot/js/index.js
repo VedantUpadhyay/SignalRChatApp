@@ -5,6 +5,20 @@ var connection;
 
 $().ready(function () {
 
+    //AJAX LOADER
+    let body = $("body");
+
+    $(document).on({
+        ajaxStart: function () {
+            $(".modal").show();
+            body.addClass("loading");
+        },
+        ajaxStop: function () {
+            $(".modal").hide();
+            body.removeClass("loading");
+        }
+    });
+
     //Establishing Hub Connection
     connection = new signalR.HubConnectionBuilder().withUrl("/hub").build();
 
@@ -17,7 +31,7 @@ $().ready(function () {
 
     connection.on("ChangeActiveStatus", function (userEmail, status) {
         userEmail = userEmail.replace("@", "_");
-        console.log(userEmail, " " ,typeof userEmail);
+        //console.log(userEmail, " " ,typeof userEmail);
 
         if (status == "online") {
             document.getElementById(userEmail).classList.add("status-online");
@@ -32,19 +46,8 @@ $().ready(function () {
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
         document.getElementById("notifySound").play();
-        let currentChatUser = $("#currentChatUser").val();
 
-        let recvDiv = document.createElement("div");
-        recvDiv.textContent = message;
-        recvDiv.classList.add("bg-primary");
-        recvDiv.classList.add("recv-msg");
-        recvDiv.classList.add("rounded");
-
-        if (currentChatUser !== undefined) {
-            if (currentChatUser === senderEmail) {
-                $("#chat-pane").append(recvDiv);
-            }
-        }
+        setRecvMessageDiv(senderEmail, message);
 
     });
 
@@ -149,6 +152,31 @@ function fillDataList(usersList) {
 
 //All ::Chatsettings here
 function openChat(chatName, chatEmail) {
+
+    //Get Messages from DB
+    //TO-DO : Load messages only once and store on LocalStorage
+    $.ajax({
+        type:"GET",
+        url: "Customer/Home/GetMyMessages",
+        data: {
+            senderEmail: chatEmail
+        },
+        success: function (response) {
+            if (response.success) {
+                console.log(response.messages);
+
+                fillChatArea(response.messages);
+
+            }
+            else {
+                console.log("No new Messagess..");
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+
     let chatPane = $("#chat-pane");
     //emptying the chat-pane
     chatPane.empty();
@@ -208,6 +236,22 @@ function openChat(chatName, chatEmail) {
 
 }
 
+async function fillChatArea(myMessages) {
+    let currentChatEmail = $("#currentChatUser").val();
+
+    myMessages.forEach(function (item, index) {
+
+        if (item.senderEmail === currentChatEmail) {
+            setRecvMessageDiv(item.senderEmail, item.messageContent);
+        }
+        else {
+            setSentMessageDiv(item.messageContent);
+        }
+
+    });
+}
+
+
 function sendMessage(chatEmail) {
 
     var messageToSend = $(".messageInput").val();
@@ -217,17 +261,7 @@ function sendMessage(chatEmail) {
     }
 
     connection.invoke("SendMessage", chatEmail, messageToSend).then(function (response) {
-        let chatPane = $("#chat-pane .upper-chat-div");
-
-        let sentMessageDiv = document.createElement("div");
-        sentMessageDiv.textContent = messageToSend;
-        sentMessageDiv.classList.add("sent-msg");
-        sentMessageDiv.classList.add("bg-success");
-        sentMessageDiv.classList.add("rounded");
-
-        chatPane.append(sentMessageDiv);
-
-        chatPane.scrollTop(chatPane.prop("scrollHeight"));
+        setSentMessageDiv(messageToSend);
 
         $(".messageInput").val("");
     });
@@ -248,5 +282,35 @@ async function getOnlineUsers() {
         console.log('onerror');
         console.log(event);
         source.close();
+    }
+}
+
+async function setSentMessageDiv(messageToSend) {
+    let chatPane = $("#chat-pane .upper-chat-div");
+
+    let sentMessageDiv = document.createElement("div");
+    sentMessageDiv.textContent = messageToSend;
+    sentMessageDiv.classList.add("sent-msg");
+    sentMessageDiv.classList.add("bg-success");
+    sentMessageDiv.classList.add("rounded");
+
+    chatPane.append(sentMessageDiv);
+
+    chatPane.scrollTop(chatPane.prop("scrollHeight"));
+}
+
+async function setRecvMessageDiv(senderEmail, message) {
+    let currentChatUser = $("#currentChatUser").val();
+
+    let recvDiv = document.createElement("div");
+    recvDiv.textContent = message;
+    recvDiv.classList.add("bg-primary");
+    recvDiv.classList.add("recv-msg");
+    recvDiv.classList.add("rounded");
+
+    if (currentChatUser !== undefined) {
+        if (currentChatUser === senderEmail) {
+            $("#chat-pane .upper-chat-div").append(recvDiv);
+        }
     }
 }
