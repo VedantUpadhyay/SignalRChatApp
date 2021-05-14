@@ -153,6 +153,11 @@ function openChat(chatName, chatEmail) {
     //emptying the chat-pane
     chatPane.empty();
 
+    let upperDiv = document.createElement("div");
+    //let bottomDiv = document.createElement("div");
+    upperDiv.classList.add("upper-chat-div");
+
+    
     let chatHeader = document.createElement("div");
     chatHeader.classList.add("chat-header");
     chatHeader.textContent = `${chatName}`;
@@ -160,9 +165,13 @@ function openChat(chatName, chatEmail) {
     hiddenCurrentChat.type = "hidden";
     hiddenCurrentChat.setAttribute("value", chatEmail);
     hiddenCurrentChat.setAttribute("id", "currentChatUser");
-    chatHeader.append(hiddenCurrentChat);
 
-    chatPane.append(chatHeader);
+    chatHeader.append(hiddenCurrentChat);
+    upperDiv.appendChild(chatHeader);
+
+    
+
+    chatPane.append(upperDiv);
 
     let sendAreaDiv = document.createElement("div");
     sendAreaDiv.classList.add("sendAreaDiv");
@@ -208,7 +217,7 @@ function sendMessage(chatEmail) {
     }
 
     connection.invoke("SendMessage", chatEmail, messageToSend).then(function (response) {
-        let chatPane = $("#chat-pane");
+        let chatPane = $("#chat-pane .upper-chat-div");
 
         let sentMessageDiv = document.createElement("div");
         sentMessageDiv.textContent = messageToSend;

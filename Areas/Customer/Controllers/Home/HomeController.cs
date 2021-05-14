@@ -66,12 +66,14 @@ namespace SignalRChatApp.Controllers
 
             foreach (var item in myFriends)
             {
-                FriendUser.Add(_userManager.FindByIdAsync(item).Result);
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result);
             }
 
             foreach (var item in moreFriends)
             {
-                FriendUser.Add(_userManager.FindByIdAsync(item).Result);
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result);
             }
 
             return View(FriendUser);
@@ -94,7 +96,10 @@ namespace SignalRChatApp.Controllers
         {
             return Json(new
             {
-                users = _db.ApplicationUsers.Where(u => u.ChatName.Contains(userName) && u.Email != User.Identity.Name).Select(u => new
+                users = _db.ApplicationUsers
+                .Where(u => u.ChatName
+                .Contains(userName) && u.Email != User.Identity.Name)
+                .Select(u => new
                 {
                     u.ChatName,u.Email
                 }).ToList()
@@ -103,7 +108,7 @@ namespace SignalRChatApp.Controllers
 
         //Add Friends
         [HttpPost]
-        public IActionResult AddFriend(string friendEmail)
+        public async Task<IActionResult> AddFriend(string friendEmail)
         {
             if (friendEmail != null)
             {
@@ -111,7 +116,7 @@ namespace SignalRChatApp.Controllers
                 var friendId = _userManager.FindByEmailAsync(friendEmail).Result.Id;
 
                 //check if he is already my friend
-                var friendsListCount = _db.Friends.Where(
+                int friendsListCount = _db.Friends.Where(
                     u => u.MyId == myUserId && u.FriendId == friendId || (u.FriendId == myUserId && u.MyId == friendId)
                     ).ToList().Count;
 
