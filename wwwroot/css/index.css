@@ -46,6 +46,7 @@
     padding: 1%;
     font-size: larger;
     max-width: 90%;
+    min-width:100%;
     /*max-height: 70px;*/
     cursor: pointer;
 }
@@ -92,8 +93,8 @@
 }
 
 #friends-pane {
-    min-width:10vw;
-    max-width:30vw;
+    min-width:25%;
+    max-width:40%;
     background: linear-gradient(to right, #ccffff 0%, #ffffff 100%);
     border: 1px solid;
     margin-right:1rem;
@@ -105,6 +106,7 @@
     max-width: 75vw;
     position: relative;
     /*padding: 1rem;*/
+    overflow-y:hidden;
     width: 100%;
     background: #C9D6FF; /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #E2E2E2, #C9D6FF); /* Chrome 10-25, Safari 5.1-6 */
@@ -140,9 +142,13 @@
     width: 53%;
     display: inline;*/
    position:absolute;
-   bottom:0.5rem;
+   
    left:0;
    min-width:100%;
+   max-width:100%;
+   height:fit-content();
+   display:inline;
+   /*flex-wrap:nowrap;*/
    
 }
 
@@ -198,7 +204,8 @@
 
 .messageInput {
     height: 100%;
-    width: 95%;
+    min-width:92%;
+    max-width: 95%;
     border: none;
     overflow: auto;
     outline: none;
@@ -209,6 +216,8 @@
 .sendButton {
     color: darkblue;
     cursor: pointer;
+    margin-left:0;
+    margin-right:auto;
     font-size: 2rem;
     /*padding-top:10px;*/
     height: 100%;
@@ -253,4 +262,13 @@ body.loading .modal {
    modal element will be visible */
 body.loading .modal {
     display: block;
+}
+
+.typing-animate {
+    font-style:italic;
+    color:grey;
+}
+
+.displayNone {
+    display:none;
 }

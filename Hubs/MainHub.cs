@@ -101,5 +101,20 @@ namespace SignalRChatApp.Hubs
             }
 
         }
+
+        public async Task TypingAnimate(string userToSend)
+        {
+            ApplicationUser recvUser = await _userManager.FindByEmailAsync(userToSend);
+            string recvId = recvUser.Id;
+
+            string typingUserEmail = _userManager.GetUserAsync(Context.User).Result.Email;
+
+            //check if that user is online
+            if (_onlineUsersManager.onlineUsers.Contains(userToSend))
+            {
+                //forward typing animation..
+                await Clients.User(recvId).SendAsync("SetTypingAnimation", typingUserEmail);
+            }
+        }
     }
 }

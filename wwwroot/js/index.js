@@ -4,7 +4,9 @@
 var connection;
 
 $().ready(function () {
-
+    var typingIndex = 0;
+    var typingText = "....";
+    var typingSpeed = "9";
     //AJAX LOADER
     //let body = $("body");
 
@@ -28,6 +30,20 @@ $().ready(function () {
     }).catch(function (err) {
         return console.error(err.toString());
     });
+
+    connection.on("SetTypingAnimation", function (typingUserEmail) {
+        let friendItalk = $("#currentChatUser").val();
+
+        
+
+        //i am talking to to him/her..
+        if (friendItalk != undefined && friendItalk == typingUserEmail) {
+            console.log("Type animate..");
+            
+            console.log($(".sendAreaDiv:first-child").text());
+        }
+    });
+
 
     connection.on("ChangeActiveStatus", function (userEmail, status) {
         userEmail = userEmail.replace("@", "_");
@@ -143,6 +159,8 @@ function fillDataList(usersList) {
                         }
                         else {
                             if (response.alreadyFriend) {
+                                console.log(`${value.chatName} ${value.email} is already your friend`);
+                                openChat(value.chatName, value.email);
                                 console.log(`${value.chatName} is already your friend`);
                             }
                             else {
@@ -173,6 +191,10 @@ function fillDataList(usersList) {
 
 //All ::Chatsettings here
 function openChat(chatName, chatEmail) {
+
+    //changing Winow title
+    document.title = `${chatName.toUpperCase()} - Chat`;
+
     //Updating Pending Messages..
     connection.invoke("UpdatePendingMessages", chatEmail).then(function (response) {
         console.log("Updated!");
@@ -248,6 +270,19 @@ function openChat(chatName, chatEmail) {
     messageInput.classList.add("rounded-pill");
     messageInput.classList.add("messageInput");
 
+    //Typing animation
+    messageInput.addEventListener("keydown", function (ev) {
+
+        let userInput = ev.keyCode;
+        let currentFriend = $("#currentChatUser").val();
+
+        if (userInput != 13) {
+            connection.invoke("TypingAnimate", currentFriend).then(function (response) {
+
+            });
+        }
+    });
+
     let sendButton = document.createElement("span");
     sendButton.classList.add("rounded");
     let sendFA = document.createElement("i");
@@ -259,6 +294,14 @@ function openChat(chatName, chatEmail) {
     sendButton.onclick = function (e) {
         sendMessage(chatEmail);
     }
+
+    let tpanDiv = document.createElement("div");
+    tpanDiv.setAttribute("id", `${chatEmail.replace("@", "_")}-tp`);
+    tpanDiv.classList.add("displayNone");
+    tpanDiv.classList.add("typing-animate");
+    tpanDiv.textContent = `${chatName} is typing..`;
+
+    sendAreaDiv.appendChild(tpanDiv);
 
     sendAreaDiv.appendChild(messageInput);
     sendAreaDiv.appendChild(sendButton);
@@ -353,5 +396,5 @@ async function setRecvMessageDiv(senderEmail, message) {
            
         }
     }
-    chatPane.scrollTop(chatPane.prop("scrollHeight"));
+    $("#chat-pane .upper-chat-div").scrollTop($("#chat-pane .upper-chat-div").prop("scrollHeight"));
 }
