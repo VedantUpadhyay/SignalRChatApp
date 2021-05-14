@@ -82,5 +82,24 @@ namespace SignalRChatApp.Hubs
 
             return $"{RecvUser} isn't online";
         }
+
+        public async Task UpdatePendingMessages(string chatEmail)
+        {
+            string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ApplicationUser myFriend = await _userManager.FindByEmailAsync(chatEmail);
+            string myFrindId = myFriend.Id;
+
+            foreach (var item in _db.Messages
+                .Where(
+                    u => u.ReceiverId == myId && u.SenderId == myFrindId
+                )
+                .ToList())
+            {
+                item.IsPending = false;
+                 _db.Update(item);
+                await _db.SaveChangesAsync();
+            }
+
+        }
     }
 }

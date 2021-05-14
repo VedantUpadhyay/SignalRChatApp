@@ -23,21 +23,29 @@
 
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
-        background: #b30000;
+        background-color:lightgray;
     }
 
 
 
 
+.friend-card img {
+    height:100%;
+    width:20%;
+    overflow-wrap:normal;
+}
+
+
 .friend-card {
-    height:fit-content();
-    position:relative;
+    height: 5rem;
+   
+    position: relative;
     list-style: none;
     color: darkblue;
     margin: 1%;
     padding: 1%;
     font-size: larger;
-    max-width: fit-content();
+    max-width: 90%;
     /*max-height: 70px;*/
     cursor: pointer;
 }
@@ -48,9 +56,9 @@
 
 
 
-
 #user-search-list {
-    position:absolute;
+    position:fixed;
+    z-index:1000;
 }
 
 #friends-list {
@@ -165,8 +173,21 @@
     background-color: lawngreen;
 }
 
+.floating-pending-msg {
+    min-width:fit-content();
+    position:absolute;
+    right:0.2rem;
+    text-align:center;
+    top:20%;
+    
+    max-height:fit-content();
+    font-size:1.5rem;
+    color:white;
+    background:red;
+}
+
 .recv-msg {
-    color:ghostwhite;
+    color: ghostwhite;
     margin-left: 0.5rem;
     margin-bottom: 0.33rem;
     padding: 0.33rem;
@@ -185,10 +206,9 @@
 }
 
 
-
 .sendButton {
-    color:darkblue;
-    cursor:pointer;
+    color: darkblue;
+    cursor: pointer;
     font-size: 2rem;
     /*padding-top:10px;*/
     height: 100%;

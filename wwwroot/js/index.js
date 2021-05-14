@@ -6,18 +6,18 @@ var connection;
 $().ready(function () {
 
     //AJAX LOADER
-    let body = $("body");
+    //let body = $("body");
 
-    $(document).on({
-        ajaxStart: function () {
-            $(".modal").show();
-            body.addClass("loading");
-        },
-        ajaxStop: function () {
-            $(".modal").hide();
-            body.removeClass("loading");
-        }
-    });
+    //$(document).on({
+    //    ajaxStart: function () {
+    //        $(".modal").show();
+    //        body.addClass("loading");
+    //    },
+    //    ajaxStop: function () {
+    //        $(".modal").hide();
+    //        body.removeClass("loading");
+    //    }
+    //});
 
     //Establishing Hub Connection
     connection = new signalR.HubConnectionBuilder().withUrl("/hub").build();
@@ -45,9 +45,30 @@ $().ready(function () {
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
+        let currentChatUser = $("#currentChatUser").val();
         document.getElementById("notifySound").play();
 
-        setRecvMessageDiv(senderEmail, message);
+        //I ain't chatting with him/her..
+        if (currentChatUser === undefined || currentChatUser != senderEmail) {
+            
+            var finderId = senderEmail.replace("@", "_") + "-pm";
+            var pMCount = document.getElementById(finderId).innerText;
+
+            //console.log("undef ", finderId, " ", typeof pMCount);
+
+            if (pMCount != "") {
+                document.getElementById(finderId).innerText = parseInt(pMCount) + 1;
+            }
+            else {
+                document.getElementById(finderId).style.padding = "0.33rem";
+                document.getElementById(finderId).innerText = 1;
+            }
+        }
+        else if(currentChatUser == senderEmail){
+            setRecvMessageDiv(senderEmail, message);
+        }
+
+        
 
     });
 
@@ -152,6 +173,15 @@ function fillDataList(usersList) {
 
 //All ::Chatsettings here
 function openChat(chatName, chatEmail) {
+    //Updating Pending Messages..
+    connection.invoke("UpdatePendingMessages", chatEmail).then(function (response) {
+        console.log("Updated!");
+    });
+
+
+    document.getElementById(chatEmail.replace("@", "_") + "-pm").innerText = "";
+    document.getElementById(chatEmail.replace("@", "_") + "-pm").style.padding = "0";
+
 
     //Get Messages from DB
     //TO-DO : Load messages only once and store on LocalStorage
@@ -160,6 +190,14 @@ function openChat(chatName, chatEmail) {
         url: "Customer/Home/GetMyMessages",
         data: {
             senderEmail: chatEmail
+        },
+        ajaxStart: function (e) {
+            $(".modal").show();
+            $("body").addClass("loading");
+        },
+        ajaxStop: function (e) {
+            $(".modal").hide();
+            $("body").removeClass("loading");
         },
         success: function (response) {
             if (response.success) {
@@ -233,6 +271,7 @@ function openChat(chatName, chatEmail) {
             sendMessage(chatEmail);
         }
     }
+    
 
 }
 
@@ -249,6 +288,7 @@ async function fillChatArea(myMessages) {
         }
 
     });
+    $("#chat-pane .upper-chat-div").scrollTop($("#chat-pane .upper-chat-div").prop("scrollHeight"));
 }
 
 
@@ -295,7 +335,6 @@ async function setSentMessageDiv(messageToSend) {
     sentMessageDiv.classList.add("rounded");
 
     chatPane.append(sentMessageDiv);
-
     chatPane.scrollTop(chatPane.prop("scrollHeight"));
 }
 
@@ -311,6 +350,8 @@ async function setRecvMessageDiv(senderEmail, message) {
     if (currentChatUser !== undefined) {
         if (currentChatUser === senderEmail) {
             $("#chat-pane .upper-chat-div").append(recvDiv);
+           
         }
     }
+    chatPane.scrollTop(chatPane.prop("scrollHeight"));
 }

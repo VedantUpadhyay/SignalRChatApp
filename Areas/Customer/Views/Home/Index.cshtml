@@ -1,8 +1,11 @@
 ﻿@model List<ApplicationUser>
 
 @using Microsoft.AspNetCore.Identity
+@using SignalRChatApp.Data
+@using System.Security.Claims
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext _db
 
 @{
     ViewData["Title"] = "Home Page";
@@ -33,21 +36,52 @@
                         @foreach (var item in Model)
                         {
                         <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
-                            <img style="position:relative;"  class="rounded-circle" width="25%" src="@item.ProfileImage" />
-                            @{ 
+                            <img class="rounded-circle" src="@item.ProfileImage" />
+                            @{
                                 string statusClass = string.Empty;
 
                                 if (item.IsOnline)
                                 {
                                     statusClass = "status-circle status-online";
                                 }
-                                else {
+                                else
+                                {
                                     statusClass = "status-circle";
                                 }
                             }
                             <span id="@item.Email.Replace("@","_")" class="@statusClass">
                             </span>
                             @item.ChatName
+
+                            @{
+                                var pendingMsgId = string.Empty;
+                                pendingMsgId = item.Email.Replace("@", "_") + "-pm";
+                            }
+
+                            @*
+        Logic to get Pending Messages at Runtime..
+                            *@
+
+                            @{
+
+                                string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                                string frId = item.Id;
+                                int pendingMsgCount = _db.Messages
+                                    .Where(
+                                        u => u.SenderId == frId && u.ReceiverId == myId && u.IsPending == true
+                                    )
+                                    .ToList()
+                                    .Count;
+
+                            }
+                            @if (pendingMsgCount > 0)
+                            {
+                                <span style="padding:0.33rem" id="@pendingMsgId" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
+                            }
+                            else
+                            {
+                                <span id="@pendingMsgId" class="floating-pending-msg rounded-circle"></span>
+                            }
                         </li>
                         }
                     </ul>
@@ -63,7 +97,7 @@
     </div>
 </div>
 
-<audio id="notifySound" controls="controls" hidden>
+<audio autoplay="autoplay" id="notifySound" hidden>
     <source src="/sms_notification.mp3" type="audio/mp3" />
 </audio>
 

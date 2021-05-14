@@ -102,7 +102,7 @@ namespace SignalRChatApp.Controllers
             string senderId = sender.Id;
 
             var messages = _db.Messages
-                .Where(u => u.ReceiverId == myId && u.SenderId == senderId || (u.SenderId == myId && u.ReceiverId == senderId))
+                .Where(u => (u.ReceiverId == myId && u.SenderId == senderId) || (u.SenderId == myId && u.ReceiverId == senderId))
                 .Select(x => new
                 {
                     senderEmail = _userManager.FindByIdAsync(x.SenderId).Result.Email,
@@ -151,7 +151,7 @@ namespace SignalRChatApp.Controllers
             if (friendEmail != null)
             {
                 var myUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var friendId = _userManager.FindByEmailAsync(friendEmail).Result.Id;
+                var friendId =  _userManager.FindByEmailAsync(friendEmail).Result.Id;
 
                 //check if he is already my friend
                 int friendsListCount = _db.Friends.Where(
