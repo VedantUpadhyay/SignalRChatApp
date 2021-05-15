@@ -67,11 +67,30 @@
     top:0;
 }
 
-#friends-list:first-of-type h3 {
-    color:darkblue;
+.fr-gr-title .title {
+    color: darkblue;
+    font-size: 2em;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
 }
 
-#friends-list i {
+#CreateGroupBtn {
+    cursor:pointer;
+}
+
+.fr-gr-title .fas {
+    position: absolute;
+    top: 50%;
+    right: 0;
+}
+
+.fr-gr-title {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    display: inline;
+}
+
+#friends-list:first-of-type i {
     position: absolute;
     right: 5px;
     top: 20px;

@@ -39,9 +39,13 @@ $().ready(function () {
         //i am talking to to him/her..
         if (friendItalk != undefined && friendItalk == typingUserEmail) {
             console.log("Type animate..");
-            
-            console.log($(".sendAreaDiv:first-child").text());
+            var userTochange = `${typingUserEmail.replace("@", "_")}-tp`;
+            document.getElementById(userTochange).classList.remove("displayNone")
         }
+        setTimeout(function () {
+            document.getElementById(userTochange).classList.add("displayNone");
+        }, 1300);
+        
     });
 
 
