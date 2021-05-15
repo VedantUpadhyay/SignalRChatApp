@@ -49,6 +49,8 @@ namespace SignalRChatApp.Hubs
 
         public string SendMessage(string RecvUser,string message)
         {
+            
+
             var senderEmail = Context.User.Identity.Name;
             var recvId = _userManager.FindByEmailAsync(RecvUser).Result.Id;
             try

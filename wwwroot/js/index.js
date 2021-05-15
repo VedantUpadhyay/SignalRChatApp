@@ -4,6 +4,10 @@
 var connection;
 
 $().ready(function () {
+
+    //Create Group
+
+
     var typingIndex = 0;
     var typingText = "....";
     var typingSpeed = "9";

@@ -1,0 +1,78 @@
+﻿@using SignalRChatApp.Models.ViewModels
+@model GroupVM
+
+@{
+    ViewData["Title"] = "Create Group";
+}
+
+<style>
+    .show-members {
+        margin: 0 15px;
+    }
+
+    #friends-select-box {
+        min-width:300px;
+        max-width:400px;
+        min-height:fit-content();
+        max-height:405px;
+       margin:1rem 0;
+       border:1px solid grey;
+       padding:1.1rem;
+       overflow-y:auto;
+    }
+
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="CreateGroup" enctype="multipart/form-data">
+            <h4>Create a Group</h4>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Group.GroupName"></label>
+                <input asp-for="@Model.Group.GroupName" class="form-control" />
+                <span asp-validation-for="@Model.Group.GroupName" class="text-danger"></span>
+            </div>
+
+            <div id="friends-select-box">
+                <h3>Select Friends</h3>
+                @{
+                    foreach (var item in (List<ApplicationUser>)ViewBag.myFriends)
+                    {
+                     <div class="form-check">
+                     <label class="form-check-label" for="@item.ChatName">
+                  <input onchange="printName('@item.Email')"  type="checkbox" class="form-check-input" id="@item.ChatName" name="SelectedMembers" value="@item.Email">@item.ChatName&nbsp;(@item.Email)
+                      </label>
+                       </div>
+                    }
+                }
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.Group.GroupImage"></label>
+                <input name="ImageFile" accept=".jpg" type="file" class="form-control" />
+                <span asp-validation-for="@Model.Group.GroupImage" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Add Group</button>
+        </form>
+    </div>   
+
+    <div class="show-members">
+        <h3>Group Members</h3>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script defer>
+        function printName(obj) {
+            console.log(obj);
+            let formdata = new FormData();
+            
+        }
+    </script>
+}

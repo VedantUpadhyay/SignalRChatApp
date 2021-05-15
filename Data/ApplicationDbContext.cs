@@ -20,6 +20,10 @@ namespace SignalRChatApp.Data
 
         public DbSet<Messages> Messages { get; set; }
 
+        public DbSet<GroupMembers> GroupMembers { get; set; }
+
+        public DbSet<Groups> Groups { get; set; }
+
     }
 
 }

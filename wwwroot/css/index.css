@@ -112,16 +112,19 @@
 }
 
 #friends-pane {
-    min-width:25%;
-    max-width:40%;
+    float: left;
+    width:40%;
+    min-width: 300px;
+    min-width: 300px;
     background: linear-gradient(to right, #ccffff 0%, #ffffff 100%);
     border: 1px solid;
-    margin-right:1rem;
-    padding:1rem;
+    margin-right: 1rem;
+    padding: 1rem;
 }
 
 #chat-pane {
-    min-width: 55vw;
+    float:left;
+    min-width: 600px;
     max-width: 75vw;
     position: relative;
     /*padding: 1rem;*/

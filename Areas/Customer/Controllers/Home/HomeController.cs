@@ -14,6 +14,7 @@ using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Text.Json;
+using SignalRChatApp.Models.ViewModels;
 
 namespace SignalRChatApp.Controllers
 {
@@ -56,6 +57,59 @@ namespace SignalRChatApp.Controllers
             }
 
         }
+
+        //POST Group
+        [HttpPost]
+        public async Task<IActionResult> CreateGroup(Groups Group)
+        {
+            var selectedMembers = Request.Form["SelectedMembers"].ToList();
+
+            return Ok();
+        }
+
+
+        //Get Group 
+        [HttpGet]
+        public IActionResult CreateGroup()
+        {
+            GroupVM groupVM = new GroupVM
+            {
+                Group = new Groups(),
+                GroupMembers = new GroupMembers()
+            };
+
+            //getting his/her friends..
+            string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var myFriends = _db.Friends
+                .Where(u => u.MyId == myId)
+                .Select(u => u.FriendId)
+                .ToList();
+
+            List<ApplicationUser> FriendUser = new List<ApplicationUser>();
+
+            var moreFriends = _db.Friends
+                .Where(u => u.FriendId == myId)
+                .Select(u => u.MyId)
+                .ToList();
+
+            foreach (var item in myFriends)
+            {
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result);
+            }
+
+            foreach (var item in moreFriends)
+            {
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result);
+            }
+
+            ViewBag.myFriends = FriendUser;
+
+            return View(groupVM);
+        }
+
 
         public IActionResult Index()
         {
