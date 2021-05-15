@@ -61,8 +61,13 @@ namespace SignalRChatApp.Controllers
         {
             var myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var myFriends = _db.Friends.Where(u => u.MyId == myId ).Select(u => u.FriendId).ToList();
+
             List<ApplicationUser> FriendUser = new List<ApplicationUser>();
-            var moreFriends = _db.Friends.Where(u => u.FriendId == myId).Select(u => u.MyId).ToList();
+
+            var moreFriends = _db.Friends
+                .Where(u => u.FriendId == myId)
+                .Select(u => u.MyId)
+                .ToList();
 
             foreach (var item in myFriends)
             {
@@ -107,7 +112,7 @@ namespace SignalRChatApp.Controllers
                 {
                     senderEmail = _userManager.FindByIdAsync(x.SenderId).Result.Email,
                     recvEmail = _userManager.FindByIdAsync(x.ReceiverId).Result.Email,
-                    sentTime = x.SentTime,
+                    sentTime = x.SentTime.ToString("F"),
                     messageContent = x.Text
                 })
                 .ToList();

@@ -217,14 +217,6 @@ function openChat(chatName, chatEmail) {
         data: {
             senderEmail: chatEmail
         },
-        ajaxStart: function (e) {
-            $(".modal").show();
-            $("body").addClass("loading");
-        },
-        ajaxStop: function (e) {
-            $(".modal").hide();
-            $("body").removeClass("loading");
-        },
         success: function (response) {
             if (response.success) {
                 console.log(response.messages);
@@ -328,10 +320,10 @@ async function fillChatArea(myMessages) {
     myMessages.forEach(function (item, index) {
 
         if (item.senderEmail === currentChatEmail) {
-            setRecvMessageDiv(item.senderEmail, item.messageContent);
+            setRecvMessageDiv(item.senderEmail, item.messageContent, item.sentTime);
         }
         else {
-            setSentMessageDiv(item.messageContent);
+            setSentMessageDiv(item.messageContent, item.sentTime);
         }
 
     });
@@ -372,13 +364,14 @@ async function getOnlineUsers() {
     }
 }
 
-async function setSentMessageDiv(messageToSend) {
+async function setSentMessageDiv(messageToSend,sentTimeString) {
     let chatPane = $("#chat-pane .upper-chat-div");
 
     let mainChatDiv = document.createElement("div");
     mainChatDiv.classList.add("msg-dateTime");
     mainChatDiv.classList.add("rounded");
-    mainChatDiv.textContent = `${new Date().toLocaleString()}`;
+    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString()
+    mainChatDiv.textContent = `${timeToPrint}`;
 
     chatPane.append(mainChatDiv);
 
@@ -392,13 +385,15 @@ async function setSentMessageDiv(messageToSend) {
     chatPane.scrollTop(chatPane.prop("scrollHeight"));
 }
 
-async function setRecvMessageDiv(senderEmail, message) {
+async function setRecvMessageDiv(senderEmail, message, sentTimeString) {
     let currentChatUser = $("#currentChatUser").val();
+
+    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString();
 
     let mainChatDiv = document.createElement("div");
     mainChatDiv.classList.add("msg-dateTime-recv");
     mainChatDiv.classList.add("rounded");
-    mainChatDiv.textContent = `${new Date().toLocaleString()}`;
+    mainChatDiv.textContent = `${timeToPrint}`;
 
 
     let recvDiv = document.createElement("div");
