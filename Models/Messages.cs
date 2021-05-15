@@ -22,8 +22,8 @@ namespace SignalRChatApp.Models
         public string ReceiverId { get; set; }
 
         [Required]
-        [DataType(DataType.Text),MaxLength(25)]
-        public string SentTime { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime SentTime { get; set; }
 
         public bool IsPending { get; set; }
     }

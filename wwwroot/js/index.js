@@ -80,7 +80,11 @@ $().ready(function () {
                 document.getElementById(finderId).innerText = 1;
             }
         }
-        else if(currentChatUser == senderEmail){
+        else if (currentChatUser == senderEmail) {
+            //Updating Pending Messages..
+            connection.invoke("UpdatePendingMessages", senderEmail).then(function (response) {
+                console.log("Updated!");
+            });
             setRecvMessageDiv(senderEmail, message);
         }
 
@@ -371,6 +375,13 @@ async function getOnlineUsers() {
 async function setSentMessageDiv(messageToSend) {
     let chatPane = $("#chat-pane .upper-chat-div");
 
+    let mainChatDiv = document.createElement("div");
+    mainChatDiv.classList.add("msg-dateTime");
+    mainChatDiv.classList.add("rounded");
+    mainChatDiv.textContent = `${new Date().toLocaleString()}`;
+
+    chatPane.append(mainChatDiv);
+
     let sentMessageDiv = document.createElement("div");
     sentMessageDiv.textContent = messageToSend;
     sentMessageDiv.classList.add("sent-msg");
@@ -384,6 +395,12 @@ async function setSentMessageDiv(messageToSend) {
 async function setRecvMessageDiv(senderEmail, message) {
     let currentChatUser = $("#currentChatUser").val();
 
+    let mainChatDiv = document.createElement("div");
+    mainChatDiv.classList.add("msg-dateTime-recv");
+    mainChatDiv.classList.add("rounded");
+    mainChatDiv.textContent = `${new Date().toLocaleString()}`;
+
+
     let recvDiv = document.createElement("div");
     recvDiv.textContent = message;
     recvDiv.classList.add("bg-primary");
@@ -392,8 +409,8 @@ async function setRecvMessageDiv(senderEmail, message) {
 
     if (currentChatUser !== undefined) {
         if (currentChatUser === senderEmail) {
+            $("#chat-pane .upper-chat-div").append(mainChatDiv);
             $("#chat-pane .upper-chat-div").append(recvDiv);
-           
         }
     }
     $("#chat-pane .upper-chat-div").scrollTop($("#chat-pane .upper-chat-div").prop("scrollHeight"));

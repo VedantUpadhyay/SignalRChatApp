@@ -56,7 +56,7 @@ namespace SignalRChatApp.Hubs
                 var messageModel = new Messages
                 {
                     SenderId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    SentTime = DateTime.Now.ToLocalTime().ToString(),
+                    SentTime = DateTime.Now,
                     ReceiverId = recvId,
                     Text = message,
                     IsPending = true
