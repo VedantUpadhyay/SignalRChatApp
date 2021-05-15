@@ -60,14 +60,18 @@ namespace SignalRChatApp.Controllers
         public IActionResult Index()
         {
             var myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var myFriends = _db.Friends.Where(u => u.MyId == myId ).Select(u => u.FriendId).ToList();
+            var myFriends = _db.Friends
+                .Where(u => u.MyId == myId )
+                .Select(u => u.FriendId)
+                .ToList();
 
             List<ApplicationUser> FriendUser = new List<ApplicationUser>();
 
-            var moreFriends = _db.Friends
-                .Where(u => u.FriendId == myId)
-                .Select(u => u.MyId)
-                .ToList();
+             var moreFriends = _db.Friends
+                 .Where(u => u.FriendId == myId)
+                 .Select(u => u.MyId)
+                 .ToList();
+
 
             foreach (var item in myFriends)
             {

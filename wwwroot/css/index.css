@@ -30,9 +30,9 @@
 
 
 .friend-card img {
-    height:100%;
-    width:20%;
-    overflow-wrap:normal;
+    height: 100%;
+    width: 20%;
+    object-fit: cover;
 }
 
 
@@ -212,7 +212,7 @@
     max-height:fit-content();
     font-size:1.5rem;
     color:white;
-    background:red;
+    background:lawngreen;
 }
 
 .recv-msg {

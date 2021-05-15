@@ -199,6 +199,16 @@ function openChat(chatName, chatEmail) {
     //changing Winow title
     document.title = `${chatName.toUpperCase()} - Chat`;
 
+    //chaning document title IMG
+    var link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = `/Images/${chatEmail}.jpg`;
+    
+
     //Updating Pending Messages..
     connection.invoke("UpdatePendingMessages", chatEmail).then(function (response) {
         console.log("Updated!");
