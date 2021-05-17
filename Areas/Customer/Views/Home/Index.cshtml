@@ -31,14 +31,13 @@
                 </ul>
                 <div class="fr-gr-title">
                     <span class="title">Friends & Groups</span>
-                    
                 </div>
 
                 <div>
                     <ul class="list-group">
                         @foreach (var item in Model)
                         {
-                        <li onclick="openChat('@item.ChatName','@item.Email')" class="rounded-pill friend-card list-group-item-light">
+                        <li onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">
                             <img class="rounded-circle" src="@item.ProfileImage" />
                             @{
                                 string statusClass = string.Empty;
@@ -87,6 +86,62 @@
                             }
                         </li>
                         }
+                        <!--Groups-->
+                        @foreach (var item in ((List<Groups>)ViewBag.myGroups))
+                        {
+                    <li onclick="openChat('@item.GroupName','',true)" class="rounded-pill friend-card list-group-item-light">
+                        <img class="rounded-circle" src="@item.GroupImage" />
+                        @{
+//string statusClass = string.Empty;
+
+//if (item.IsOnline)
+//{
+//    statusClass = "status-circle status-online";
+//}
+//else
+//{
+//    statusClass = "status-circle";
+//}
+                        }
+                        <!--<span id="@item.GroupId" class="">
+                        </span>
+                            -->
+                        @item.GroupName
+
+                        @{
+                            int pendingMsgId = item.GroupId;
+                        }
+
+                        @*
+        Logic to get Pending Messages at Runtime..
+                        *@
+
+                        @{
+
+//string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+//string frId = item.Id;
+//int pendingMsgCount = _db.Messages
+//    .Where(
+//        u => u.SenderId == frId && u.ReceiverId == myId && u.IsPending == true
+//    )
+//    .ToList()
+//    .Count;
+
+                        }
+                        @**
+                        @if (pendingMsgCount > 0)
+                        {
+                            <span style="padding:0.33rem" id="@pendingMsgId" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
+                        }
+                        else
+                        {
+                            <span id="@pendingMsgId" class="floating-pending-msg rounded-circle"></span>
+                        }
+                            **@
+                    </li>
+                        }
+
+
                     </ul>
                 </div>
 

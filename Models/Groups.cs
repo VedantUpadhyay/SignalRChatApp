@@ -16,8 +16,11 @@ namespace SignalRChatApp.Models
         public string GroupName { get; set; }
 
         [Display(Name = "Group Image")]
-        [DataType(DataType.Text),MaxLength(75)]
+        [DataType(DataType.Text),MaxLength(250)]
         public string GroupImage { get; set; }
+
+        [Required]
+        public string GroupCreatorId { get; set; }
 
 
     }

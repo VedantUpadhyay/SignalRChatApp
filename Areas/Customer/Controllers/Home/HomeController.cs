@@ -15,6 +15,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Text.Json;
 using SignalRChatApp.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace SignalRChatApp.Controllers
 {
@@ -62,9 +63,61 @@ namespace SignalRChatApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroup(Groups Group)
         {
-            var selectedMembers = Request.Form["SelectedMembers"].ToList();
 
-            return Ok();
+            //check if group already exists
+            Groups fromDb = _db.Groups.FirstOrDefault(
+                    g => g.GroupName == Group.GroupName
+                );
+
+            if (fromDb != null)
+            {
+                return RedirectToAction("CreateGroup");
+            }
+
+            //List of selected emails
+            List<string> selectedMembers = Request.Form["SelectedMembers"].ToList();
+            selectedMembers.Add(User.Identity.Name);
+
+            string groupImageUrl = string.Empty;
+
+            IFormFile profileImageFile = Request.Form.Files[0];
+
+            if (profileImageFile == null)
+            {
+                return RedirectToAction("CreateGroup");
+            }
+
+            var imagePath = @"D:\.NET projects\SignalRChatApp\wwwroot\Images\GroupImages\" + Group.GroupName + ".jpg";
+            await profileImageFile.CopyToAsync(new FileStream(imagePath, FileMode.Create));
+            groupImageUrl = @"Images\GroupImages\" + Group.GroupName + ".jpg";
+            Group.GroupImage = groupImageUrl;
+
+            Group.GroupCreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await _db.Groups.AddAsync(Group);
+            await _db.SaveChangesAsync();
+
+            //Adding members to group..
+           int groupId = _db.Groups.First(g => g.GroupName == Group.GroupName && g.GroupImage == Group.GroupImage).GroupId;
+
+            if (groupId > 0)
+            {
+                foreach (var member in selectedMembers)
+                {
+                    ApplicationUser user =  await _userManager.FindByEmailAsync(member);
+
+                    await _db.GroupMembers.AddAsync(
+                            new GroupMembers
+                            {
+                                GroupId = groupId,
+                                UserId = user.Id
+                            }
+                        );
+                    await _db.SaveChangesAsync();
+                }
+            }
+         
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -138,6 +191,22 @@ namespace SignalRChatApp.Controllers
                 FriendUser
                     .Add(_userManager.FindByIdAsync(item).Result);
             }
+
+            //getting the list of groupid where userid == myid
+            List<int> myGroupsId = _db.GroupMembers
+                .Where(g => g.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(x => x.GroupId)
+                .ToList();
+
+            List<Groups> myGroups = new List<Groups>();
+
+            foreach (var item in myGroupsId)
+            {
+                myGroups.Add(_db.Groups.Find(item));
+            }
+
+            ViewBag.myGroups = myGroups;
+                
 
             return View(FriendUser);
         }

@@ -10,6 +10,7 @@
         margin: 0 15px;
     }
 
+
     #friends-select-box {
         min-width:300px;
         max-width:400px;
@@ -19,6 +20,13 @@
        border:1px solid grey;
        padding:1.1rem;
        overflow-y:auto;
+    }
+
+    /*#selected-memebrs-list {
+        margin:20%;
+    }*/
+    #selected-memebrs-list li {
+        min-width:fit-content();
     }
 
 </style>
@@ -51,7 +59,7 @@
 
             <div class="form-group">
                 <label asp-for="@Model.Group.GroupImage"></label>
-                <input name="ImageFile" accept=".jpg" type="file" class="form-control" />
+                <input name="ImageFile" type="file" class="form-control" />
                 <span asp-validation-for="@Model.Group.GroupImage" class="text-danger"></span>
             </div>
 
@@ -61,6 +69,9 @@
 
     <div class="show-members">
         <h3>Group Members</h3>
+        <ul class="list-group list-group-flush" id="selected-memebrs-list">
+            
+        </ul>
     </div>
 </div>
 
@@ -70,9 +81,21 @@
     <partial name="_ValidationScriptsPartial" />
     <script defer>
         function printName(obj) {
-            console.log(obj);
-            let formdata = new FormData();
-            
+            let selectedMembersList = [];
+
+            $('input[name="SelectedMembers"]:checked').each(
+                function () {
+                    selectedMembersList.push(this.value);
+                }
+            );
+            $("#selected-memebrs-list").empty();
+            $(selectedMembersList).each(function (index, element) {
+                let memberLi = document.createElement("li");
+                memberLi.textContent = element;
+                memberLi.classList.add("list-group-item");
+                memberLi.classList.add("list-group-item-success");
+                $("#selected-memebrs-list").append(memberLi);
+            });
         }
     </script>
 }

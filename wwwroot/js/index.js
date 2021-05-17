@@ -202,7 +202,7 @@ function fillDataList(usersList) {
 
 
 //All ::Chatsettings here
-function openChat(chatName, chatEmail) {
+function openChat(chatName, chatEmail,isGroup) {
 
     //changing Winow title
     document.title = `${chatName.toUpperCase()} - Chat`;

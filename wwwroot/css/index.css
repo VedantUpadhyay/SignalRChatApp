@@ -69,9 +69,10 @@
 
 .fr-gr-title .title {
     color: darkblue;
-    font-size: 2em;
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
+    font-size: 1.33em;
+   /* margin-top: 1.5em;
+    margin-bottom: 1.5em;*/
+   padding:1rem;
 }
 
 #CreateGroupBtn {
@@ -85,8 +86,7 @@
 }
 
 .fr-gr-title {
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
+   margin:1rem auto;
     display: inline;
 }
 

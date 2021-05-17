@@ -26,5 +26,7 @@ namespace SignalRChatApp.Models
         public DateTime SentTime { get; set; }
 
         public bool IsPending { get; set; }
+
+        public bool IsGroupMessage { get; set; }
     }
 }
