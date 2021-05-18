@@ -37,7 +37,7 @@
                     <ul class="list-group">
                         @foreach (var item in Model)
                         {
-                        <li onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">
+                        <li id="Id_@item.Id" onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">
                             <img class="rounded-circle" src="@item.ProfileImage" />
                             @{
                                 string statusClass = string.Empty;
@@ -89,7 +89,7 @@
                         <!--Groups-->
                         @foreach (var item in ((List<Groups>)ViewBag.myGroups))
                         {
-                    <li onclick="openChatGroup('@item.GroupName','@item.GroupId')" class="rounded-pill friend-card list-group-item-light">
+                    <li id="GId_@item.GroupId" onclick="openChatGroup('@item.GroupName','@item.GroupId')" class="rounded-pill friend-card list-group-item-light">
                         <img class="rounded-circle" src="@item.GroupImage" />
                        
                         @item.GroupName

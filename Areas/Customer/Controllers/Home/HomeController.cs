@@ -192,6 +192,7 @@ namespace SignalRChatApp.Controllers
                     .Add(_userManager.FindByIdAsync(item).Result);
             }
 
+
             //getting the list of groupid where userid == myid
             List<int> myGroupsId = _db.GroupMembers
                 .Where(g => g.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))

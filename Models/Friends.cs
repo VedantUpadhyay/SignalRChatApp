@@ -16,5 +16,6 @@ namespace SignalRChatApp.Models
 
         [Required]
         public string FriendId { get; set; }
+
     }
 }

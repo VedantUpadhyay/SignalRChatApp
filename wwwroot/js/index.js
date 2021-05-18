@@ -210,7 +210,7 @@ function setGroupRecvMessageDiv(senderChatName, senderEmail, message, groupId, s
     let displaySenderChatName = document.createElement("span");
     displaySenderChatName.textContent = senderChatName;
     displaySenderChatName.style.fontWeight = "bolder";
-    displaySenderChatName.style.fontSize = "1rem";
+    displaySenderChatName.style.fontSize = "0.73rem";
 
     mainChatDiv.append(displaySenderChatName);
     mainChatDiv.append(`-  ${timeToPrint}`);
@@ -652,7 +652,7 @@ async function setSentMessageDiv(messageToSend,sentTimeString) {
     let mainChatDiv = document.createElement("div");
     mainChatDiv.classList.add("msg-dateTime");
     mainChatDiv.classList.add("rounded");
-    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleTimeString()
+    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString()
     mainChatDiv.textContent = `${timeToPrint}`;
 
     chatPane.append(mainChatDiv);
