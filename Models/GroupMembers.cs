@@ -16,5 +16,7 @@ namespace SignalRChatApp.Models
 
         [Required]
         public string UserId { get; set; }
+
+        public int PendingMessageCount { get; set; }
     }
 }

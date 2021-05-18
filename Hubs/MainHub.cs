@@ -85,12 +85,27 @@ namespace SignalRChatApp.Hubs
             return $"{RecvUser} isn't online";
         }
 
+        public async Task UpdateGroupPendingMessages(int groupId)
+        {
+            string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            GroupMembers groupMember =  _db.GroupMembers
+                .Where(g => g.GroupId == groupId).First();
+
+            if (groupMember != null)
+            {
+                groupMember.PendingMessageCount = 0;
+                _db.GroupMembers.Update(groupMember);
+                await _db.SaveChangesAsync();
+            }
+
+        }
+
         public async Task UpdatePendingMessages(string chatEmail)
         {
             string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
             ApplicationUser myFriend = await _userManager.FindByEmailAsync(chatEmail);
             string myFrindId = myFriend.Id;
-
             foreach (var item in _db.Messages
                 .Where(
                     u => u.ReceiverId == myId && u.SenderId == myFrindId

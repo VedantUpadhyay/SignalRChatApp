@@ -89,23 +89,9 @@
                         <!--Groups-->
                         @foreach (var item in ((List<Groups>)ViewBag.myGroups))
                         {
-                    <li onclick="openChat('@item.GroupName','',true)" class="rounded-pill friend-card list-group-item-light">
+                    <li onclick="openChatGroup('@item.GroupName','@item.GroupId')" class="rounded-pill friend-card list-group-item-light">
                         <img class="rounded-circle" src="@item.GroupImage" />
-                        @{
-//string statusClass = string.Empty;
-
-//if (item.IsOnline)
-//{
-//    statusClass = "status-circle status-online";
-//}
-//else
-//{
-//    statusClass = "status-circle";
-//}
-                        }
-                        <!--<span id="@item.GroupId" class="">
-                        </span>
-                            -->
+                       
                         @item.GroupName
 
                         @{

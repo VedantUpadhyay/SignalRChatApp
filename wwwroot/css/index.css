@@ -261,7 +261,7 @@
 .sendButton {
     color: darkblue;
     cursor: pointer;
-    margin-left:0;
+    margin-left:10px;
     margin-right:auto;
     font-size: 2rem;
     /*padding-top:10px;*/

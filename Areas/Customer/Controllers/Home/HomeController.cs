@@ -225,6 +225,32 @@ namespace SignalRChatApp.Controllers
         #region AJAX Calls
 
         [HttpGet]
+        public IActionResult GetMyGroupMessages(int groupId)
+        {
+            string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            List<Messages> myGroupMessages =  _db.Messages
+                .Where(m => m.IsGroupMessage == true)
+                .Where(m => m.GroupId == groupId)
+                .ToList();
+
+            if (myGroupMessages.Count > 0)
+            {
+                return Json(new
+                {
+                    success = true,
+                    messages = myGroupMessages
+                });
+            }
+
+            return Json(new
+            {
+                success = false,
+                conext = "No New Messages.."
+            });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetMyMessages(string senderEmail)
         {
             string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -264,15 +290,45 @@ namespace SignalRChatApp.Controllers
 
         public IActionResult GetMatchingUsers(string userName)
         {
+            string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var myFriends = _db.Friends
+                .Where(u => u.MyId == myId)
+                .Select(u => u.FriendId)
+                .ToList();
+
+            List<string> FriendUser = new List<string>();
+
+            var moreFriends = _db.Friends
+                .Where(u => u.FriendId == myId)
+                .Select(u => u.MyId)
+                .ToList();
+
+
+            foreach (var item in myFriends)
+            {
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result.Id);
+            }
+
+            foreach (var item in moreFriends)
+            {
+                FriendUser
+                    .Add(_userManager.FindByIdAsync(item).Result.Id);
+            }
+
             return Json(new
             {
-                users = _db.ApplicationUsers
+                
+
+            users = _db.ApplicationUsers
                 .Where(u => u.ChatName
-                .Contains(userName) && u.Email != User.Identity.Name)
+                .Contains(userName) && u.Email != User.Identity.Name && FriendUser.Contains(u.Id) == false)
                 .Select(u => new
                 {
                     u.ChatName,u.Email
-                }).ToList()
+                })
+                .ToList()
             });
         }
 

@@ -28,5 +28,7 @@ namespace SignalRChatApp.Models
         public bool IsPending { get; set; }
 
         public bool IsGroupMessage { get; set; }
+
+        public int GroupId { get; set; }
     }
 }

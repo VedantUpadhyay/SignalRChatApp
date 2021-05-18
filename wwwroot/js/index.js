@@ -1,5 +1,6 @@
 ﻿"use strict";
 
+var currentChatWithGroup = false;
 
 var connection;
 
@@ -102,6 +103,13 @@ $().ready(function () {
 
 
     $("#userSearch").keyup(function (event) {
+
+        var value = $(this).val().toLowerCase();
+
+        $(".list-group li").filter(function () {
+            $(this).toggle($(this).text().trim().toLowerCase().indexOf(value) > -1)
+        });
+
         var searchContent = $("#userSearch").val();
 
         if (searchContent !== null || searchContent !== "") {
@@ -168,6 +176,7 @@ function fillDataList(usersList) {
                     success: function (response) {
                         if (response.success) {
                             console.log(`Added ${value.chatName}..`);
+                            location.reload();
                         }
                         else {
                             if (response.alreadyFriend) {
@@ -200,10 +209,144 @@ function fillDataList(usersList) {
 }
 
 
+//Group Chat
+function openChatGroup(groupName, groupId) {
+    currentChatWithGroup = true;
+    //changing Winow title
+    document.title = `${groupName.toUpperCase()} - Chat`;
+
+    //chaning document title IMG
+    var link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = `/Images/GroupImages/${groupName}.jpg`;
+
+
+    //Updating Pending Messages..
+   /* connection.invoke("UpdateGroupPendingMessages", groupId).then(function (response) {
+        console.log("Updated!");
+    });
+
+*/
+
+
+    //document.getElementById(chatEmail.replace("@", "_") + "-pm").innerText = "";
+    //document.getElementById(chatEmail.replace("@", "_") + "-pm").style.padding = "0";
+
+
+    //Get Messages from DB
+    //TO-DO : Load messages only once and store on LocalStorage
+    $.ajax({
+        type: "GET",
+        url: "Customer/Home/GetMyGroupMessages",
+        data: {
+            groupId: groupId
+        },
+        success: function (response) {
+            if (response.success) {
+                console.log(response.messages);
+
+                fillChatArea(response.messages);
+
+            }
+            else {
+                console.log("No new Messagess..");
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+
+    let chatPane = $("#chat-pane");
+    //emptying the chat-pane
+    chatPane.empty();
+
+    let upperDiv = document.createElement("div");
+    //let bottomDiv = document.createElement("div");
+    upperDiv.classList.add("upper-chat-div");
+
+
+    let chatHeader = document.createElement("div");
+    chatHeader.classList.add("chat-header");
+    chatHeader.textContent = `${groupName}`;
+    let hiddenCurrentChat = document.createElement("input");
+    hiddenCurrentChat.type = "hidden";
+    hiddenCurrentChat.setAttribute("value", groupId);
+    hiddenCurrentChat.setAttribute("id", "currentGroupChat");
+
+    chatHeader.append(hiddenCurrentChat);
+    upperDiv.appendChild(chatHeader);
+
+
+
+    chatPane.append(upperDiv);
+
+    let sendAreaDiv = document.createElement("div");
+    sendAreaDiv.classList.add("sendAreaDiv");
+
+    let messageInput = document.createElement("input");
+    messageInput.type = "text";
+    messageInput.placeholder = "send a text..";
+    messageInput.classList.add("rounded-pill");
+    messageInput.classList.add("messageInput");
+
+    //Typing animation
+  /*  messageInput.addEventListener("keydown", function (ev) {
+
+        let userInput = ev.keyCode;
+        let currentFriend = $("#currentChatUser").val();
+
+        if (userInput != 13) {
+            connection.invoke("TypingAnimate", currentFriend).then(function (response) {
+
+            });
+        }
+    });
+
+*/
+
+    let sendButton = document.createElement("span");
+    sendButton.classList.add("rounded");
+    let sendFA = document.createElement("i");
+    sendFA.classList.add("fas");
+    sendFA.classList.add("fa-paper-plane");
+    sendButton.appendChild(sendFA);
+    sendButton.classList.add("sendButton");
+
+    sendButton.onclick = function (e) {
+        sendMessage(groupId);
+    }
+
+    //let tpanDiv = document.createElement("div");
+    //tpanDiv.setAttribute("id", `${chatEmail.replace("@", "_")}-tp`);
+    //tpanDiv.classList.add("displayNone");
+    //tpanDiv.classList.add("typing-animate");
+    //tpanDiv.textContent = `${chatName} is typing..`;
+
+    //sendAreaDiv.appendChild(tpanDiv);
+
+    sendAreaDiv.appendChild(messageInput);
+    sendAreaDiv.appendChild(sendButton);
+
+
+    chatPane.append(sendAreaDiv);
+    messageInput.focus();
+    messageInput.onkeypress = function (e) {
+        if (e.keyCode == 13) {
+            sendMessage(chatEmail);
+        }
+    }
+
+}
+
 
 //All ::Chatsettings here
-function openChat(chatName, chatEmail,isGroup) {
-
+function openChat(chatName, chatEmail) {
+    currentChatWithGroup = false;
     //changing Winow title
     document.title = `${chatName.toUpperCase()} - Chat`;
 
@@ -290,7 +433,7 @@ function openChat(chatName, chatEmail,isGroup) {
         let userInput = ev.keyCode;
         let currentFriend = $("#currentChatUser").val();
 
-        if (userInput != 13) {
+        if (userInput != 13 && userInput != 8 && userInput != 14) {
             connection.invoke("TypingAnimate", currentFriend).then(function (response) {
 
             });
@@ -349,7 +492,7 @@ async function fillChatArea(myMessages) {
 }
 
 
-function sendMessage(chatEmail) {
+function sendMessage(chatEmail,isGroup) {
 
     var messageToSend = $(".messageInput").val();
 
