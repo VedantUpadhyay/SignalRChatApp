@@ -47,6 +47,50 @@ namespace SignalRChatApp.Hubs
             await Clients.All.SendAsync("ChangeActiveStatus", Context.User.Identity.Name, "offline");
         }
 
+
+        public void SendGroupMessage(int groupId, string message)
+        {
+            string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string senderEmail = Context.User.Identity.Name;
+            string senderChatName = _userManager.GetUserAsync(Context.User).Result.ChatName;
+            try
+            {
+                var messageModel = new Messages
+                {
+                    SenderId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    SentTime = DateTime.Now,
+                    ReceiverId = groupId.ToString(),
+                    Text = message,
+                    IsPending = true,
+                    IsGroupMessage = true,
+                    GroupId = groupId
+                };
+
+                _db.Messages.Add(messageModel);
+                _db.SaveChanges();
+
+                foreach (var item in _db.GroupMembers.Where(g => g.GroupId == groupId && g.UserId != myId).ToList())
+                {
+                    item.PendingMessageCount += 1;
+                    _db.GroupMembers.Update(item);
+                     _db.SaveChanges();
+                    //recv is online..
+                   // if (_onlineUsersManager.onlineUsers.Contains(item.UserId) && item.UserId != myId)
+                   // {
+
+                       Clients.User(item.UserId).SendAsync("ReceiveGroupMessage", senderChatName,senderEmail, message,groupId);
+                        
+                   // }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+
         public string SendMessage(string RecvUser,string message)
         {
             
@@ -61,7 +105,8 @@ namespace SignalRChatApp.Hubs
                     SentTime = DateTime.Now,
                     ReceiverId = recvId,
                     Text = message,
-                    IsPending = true
+                    IsPending = true,
+                    IsGroupMessage = false
                 };
 
                 _db.Messages.Add(messageModel);
@@ -90,7 +135,7 @@ namespace SignalRChatApp.Hubs
             string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             GroupMembers groupMember =  _db.GroupMembers
-                .Where(g => g.GroupId == groupId).First();
+                .Where(g => g.GroupId == groupId && g.UserId == myId).First();
 
             if (groupMember != null)
             {

@@ -36,6 +36,44 @@ $().ready(function () {
         return console.error(err.toString());
     });
 
+    connection.on("ReceiveGroupMessage", function (senderChatName, senderEmail, message, groupId) {
+        console.log("grp Received..");
+        
+        let currentChatUser = $("#currentGroupChat").val();;
+       
+
+        //document.getElementById("notifySound").play();
+
+        //I ain't chatting with him/her..
+        if (currentChatUser === undefined || currentChatUser != groupId) {
+
+            console.log("not chatting in grp");
+
+            var finderId = groupId + "-pm";
+            var pMCount = document.getElementById(finderId).innerText;
+
+            //console.log("undef ", finderId, " ", typeof pMCount);
+
+            if (pMCount != "") {
+                document.getElementById(finderId).innerText = parseInt(pMCount) + 1;
+            }
+            else {
+                document.getElementById(finderId).style.padding = "0.33rem";
+                document.getElementById(finderId).innerText = 1;
+            }
+        }
+        else if (currentChatUser == groupId) {
+            //Updating Pending Messages..
+            connection.invoke("UpdateGroupPendingMessages", groupId).then(function (response) {
+                console.log("Updated!");
+            });
+            
+            setGroupRecvMessageDiv(senderChatName, senderEmail, message, groupId);
+        }
+
+
+    });
+
     connection.on("SetTypingAnimation", function (typingUserEmail) {
         let friendItalk = $("#currentChatUser").val();
 
@@ -122,7 +160,7 @@ $().ready(function () {
                 },
                 success: function (response) {
                     fillDataList(response.users);
-                    console.log(response);
+                   // console.log(response);
                 },
                 error: function (err) {
                     console.log(err);
@@ -150,6 +188,44 @@ $(window).keydown(function (e) {
         $("#user-search-list").hide();
     }
 });
+
+function setGroupRecvMessageDiv(senderChatName, senderEmail, message, groupId) {
+
+    //console.log("Func called..");
+    //console.log(senderChatName, senderEmail, message, groupId);
+    let currentChatUser = $("#currentGroupChat").val();
+
+    //let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString();
+
+    let timeToPrint = new Date().toLocaleString();
+
+    let mainChatDiv = document.createElement("div");
+    mainChatDiv.classList.add("msg-dateTime-recv");
+    mainChatDiv.classList.add("rounded");
+
+    let displaySenderChatName = document.createElement("span");
+    displaySenderChatName.textContent = senderChatName;
+    displaySenderChatName.style.fontWeight = "bolder";
+    displaySenderChatName.style.fontSize = "1rem";
+
+    mainChatDiv.append(displaySenderChatName);
+    mainChatDiv.append(`-  ${timeToPrint}`);
+    
+
+    let recvDiv = document.createElement("div");
+    recvDiv.textContent = message;
+    recvDiv.classList.add("bg-primary");
+    recvDiv.classList.add("recv-msg");
+    recvDiv.classList.add("rounded");
+
+    if (currentChatUser !== undefined) {
+        if (currentChatUser === groupId.toString()) {
+            $("#chat-pane .upper-chat-div").append(mainChatDiv);
+            $("#chat-pane .upper-chat-div").append(recvDiv);
+        }
+    }
+    $("#chat-pane .upper-chat-div").scrollTop($("#chat-pane .upper-chat-div").prop("scrollHeight"));
+}
 
 function fillDataList(usersList) {
 
@@ -208,6 +284,22 @@ function fillDataList(usersList) {
     
 }
 
+function fillGroupChatArea(myMessages) {
+    let currentChatEmail = $("#currentGroupChat").val();
+
+    myMessages.forEach(function (item, index) {
+
+        if (item.senderId !== $("#currentLoggedUserId").val()) {
+            setGroupRecvMessageDiv(item.senderChatName, '', item.text, item.groupId);
+        }
+        else {
+            setSentMessageDiv(item.text, item.sentTime);
+        }
+
+    });
+    $("#chat-pane .upper-chat-div").scrollTop($("#chat-pane .upper-chat-div").prop("scrollHeight"));
+}
+
 
 //Group Chat
 function openChatGroup(groupName, groupId) {
@@ -226,15 +318,15 @@ function openChatGroup(groupName, groupId) {
 
 
     //Updating Pending Messages..
-   /* connection.invoke("UpdateGroupPendingMessages", groupId).then(function (response) {
+    connection.invoke("UpdateGroupPendingMessages", parseInt(groupId)).then(function (response) {
         console.log("Updated!");
     });
 
-*/
 
 
-    //document.getElementById(chatEmail.replace("@", "_") + "-pm").innerText = "";
-    //document.getElementById(chatEmail.replace("@", "_") + "-pm").style.padding = "0";
+
+    document.getElementById(`${groupId}-pm`).innerText = "";
+    document.getElementById(`${groupId}-pm`).style.padding = "0";
 
 
     //Get Messages from DB
@@ -247,9 +339,9 @@ function openChatGroup(groupName, groupId) {
         },
         success: function (response) {
             if (response.success) {
-                console.log(response.messages);
+                //console.log(response.messages);
 
-                fillChatArea(response.messages);
+                fillGroupChatArea(response.messages);
 
             }
             else {
@@ -318,7 +410,7 @@ function openChatGroup(groupName, groupId) {
     sendButton.classList.add("sendButton");
 
     sendButton.onclick = function (e) {
-        sendMessage(groupId);
+        sendGroupMessage(groupId);
     }
 
     //let tpanDiv = document.createElement("div");
@@ -337,7 +429,7 @@ function openChatGroup(groupName, groupId) {
     messageInput.focus();
     messageInput.onkeypress = function (e) {
         if (e.keyCode == 13) {
-            sendMessage(chatEmail);
+            sendGroupMessage(groupId);
         }
     }
 
@@ -492,7 +584,25 @@ async function fillChatArea(myMessages) {
 }
 
 
-function sendMessage(chatEmail,isGroup) {
+
+function sendGroupMessage(groupId) {
+    var messageToSend = $(".messageInput").val();
+
+    if (messageToSend === "") {
+        return;
+    }
+
+    connection.invoke("SendGroupMessage", parseInt(groupId), messageToSend).then(function (response) {
+        setSentMessageDiv(messageToSend);
+
+        $(".messageInput").val("");
+    }, function (err) {
+            console.log(err);
+    });
+}
+
+
+function sendMessage(chatEmail) {
 
     var messageToSend = $(".messageInput").val();
 
@@ -547,6 +657,9 @@ async function setSentMessageDiv(messageToSend,sentTimeString) {
 }
 
 async function setRecvMessageDiv(senderEmail, message, sentTimeString) {
+
+    console.log("Recv called..");
+
     let currentChatUser = $("#currentChatUser").val();
 
     let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString();

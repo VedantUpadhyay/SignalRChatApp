@@ -229,9 +229,17 @@ namespace SignalRChatApp.Controllers
         {
             string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            List<Messages> myGroupMessages =  _db.Messages
+            var myGroupMessages =  _db.Messages
                 .Where(m => m.IsGroupMessage == true)
-                .Where(m => m.GroupId == groupId)
+                .Where(m => m.ReceiverId == groupId.ToString())
+                .Select(x => new
+                {
+                    groupId = x.GroupId,
+                    text = x.Text,
+                    sentTime = x.SentTime,
+                    senderId = x.SenderId,
+                    senderChatName = _userManager.FindByIdAsync(x.SenderId).Result.ChatName
+                })
                 .ToList();
 
             if (myGroupMessages.Count > 0)

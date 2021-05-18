@@ -104,26 +104,20 @@
 
                         @{
 
-//string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-//string frId = item.Id;
-//int pendingMsgCount = _db.Messages
-//    .Where(
-//        u => u.SenderId == frId && u.ReceiverId == myId && u.IsPending == true
-//    )
-//    .ToList()
-//    .Count;
+                           int pendingMsgCount = _db.GroupMembers.
+                                Where(g => g.GroupId == item.GroupId && g.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)).First().PendingMessageCount;
 
                         }
-                        @**
+                        
                         @if (pendingMsgCount > 0)
                         {
-                            <span style="padding:0.33rem" id="@pendingMsgId" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
+                            <span style="padding:0.33rem" id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
                         }
                         else
                         {
-                            <span id="@pendingMsgId" class="floating-pending-msg rounded-circle"></span>
+                            <span id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle"></span>
                         }
-                            **@
+                            
                     </li>
                         }
 
@@ -141,7 +135,7 @@
     </div>
 </div>
 
-<audio autoplay="autoplay" id="notifySound" hidden>
+<audio id="notifySound" hidden>
     <source src="/sms_notification.mp3" type="audio/mp3" />
 </audio>
 
