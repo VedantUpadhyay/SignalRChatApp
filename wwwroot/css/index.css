@@ -204,15 +204,15 @@
 }
 
 .sent-msg {
-    padding:0.33rem;
-    margin-right:0.5rem;
-    margin-left:auto;
-    margin-bottom:0.33rem;
-    width:40%;
-    color:ghostwhite;
-    max-width:fit-content();
-    font-size:larger;
-    height:fit-content();
+    padding: 0.33rem;
+    margin-right: 0.5rem;
+    margin-left: auto;
+    margin-bottom: 0.33rem;
+    width: 40%;
+    color: ghostwhite;
+    max-width: fit-content();
+    font-size: medium;
+    height: fit-content();
 }
 
 .status-circle {
@@ -233,12 +233,12 @@
 .floating-pending-msg {
     min-width:fit-content();
     position:absolute;
-    right:0.2rem;
+    right:0.5rem;
     text-align:center;
-    top:20%;
+    top:15%;
     
     max-height:fit-content();
-    font-size:1.5rem;
+    font-size:large;
     color:white;
     background:lawngreen;
 }
@@ -250,7 +250,7 @@
     padding: 0.33rem;
     height: max-content;
     width: 40%;
-    font-size: larger;
+    font-size: medium;
 }
 
 .messageInput {

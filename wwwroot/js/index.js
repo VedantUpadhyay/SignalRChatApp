@@ -38,7 +38,9 @@ $().ready(function () {
 
     connection.on("ReceiveGroupMessage", function (senderChatName, senderEmail, message, groupId) {
         console.log("grp Received..");
-        
+
+        $(`#${groupId}-pm`).parent().parent().prepend($(`#${groupId}-pm`).parent());
+
         let currentChatUser = $("#currentGroupChat").val();;
        
 
@@ -75,7 +77,7 @@ $().ready(function () {
     });
 
     connection.on("SetTypingAnimation", function (typingUserEmail) {
-        let friendItalk = $("#currentChatUser").val();
+        /*let friendItalk = $("#currentChatUser").val();
 
         
 
@@ -88,7 +90,7 @@ $().ready(function () {
         setTimeout(function () {
             document.getElementById(userTochange).classList.add("displayNone");
         }, 1300);
-        
+        */
     });
 
 
@@ -108,6 +110,10 @@ $().ready(function () {
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
+        var finderIT = senderEmail.replace("@", "_") + "-pm";
+        console.log(finderIT);
+        document.getElementById(finderIT).parentElement.parentElement.prepend(document.getElementById(finderIT).parentElement);
+
         let currentChatUser = $("#currentChatUser").val();
         document.getElementById("notifySound").play();
 
@@ -189,15 +195,13 @@ $(window).keydown(function (e) {
     }
 });
 
-function setGroupRecvMessageDiv(senderChatName, senderEmail, message, groupId) {
+function setGroupRecvMessageDiv(senderChatName, senderEmail, message, groupId, sentTime) {
 
     //console.log("Func called..");
     //console.log(senderChatName, senderEmail, message, groupId);
     let currentChatUser = $("#currentGroupChat").val();
 
-    //let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString();
-
-    let timeToPrint = new Date().toLocaleString();
+    let timeToPrint = sentTime !== undefined ? sentTime : new Date().toLocaleString();
 
     let mainChatDiv = document.createElement("div");
     mainChatDiv.classList.add("msg-dateTime-recv");
@@ -290,7 +294,7 @@ function fillGroupChatArea(myMessages) {
     myMessages.forEach(function (item, index) {
 
         if (item.senderId !== $("#currentLoggedUserId").val()) {
-            setGroupRecvMessageDiv(item.senderChatName, '', item.text, item.groupId);
+            setGroupRecvMessageDiv(item.senderChatName, '', item.text, item.groupId,item.sentTime);
         }
         else {
             setSentMessageDiv(item.text, item.sentTime);
@@ -593,6 +597,9 @@ function sendGroupMessage(groupId) {
     }
 
     connection.invoke("SendGroupMessage", parseInt(groupId), messageToSend).then(function (response) {
+
+        document.getElementById(`${groupId}-pm`).parentElement.parentElement.prepend(document.getElementById(`${groupId}-pm`).parentElement);
+
         setSentMessageDiv(messageToSend);
 
         $(".messageInput").val("");
@@ -611,6 +618,10 @@ function sendMessage(chatEmail) {
     }
 
     connection.invoke("SendMessage", chatEmail, messageToSend).then(function (response) {
+        var finderIT = chatEmail.replace("@", "_") + "-pm";
+        console.log(finderIT);
+        document.getElementById(finderIT).parentElement.parentElement.prepend(document.getElementById(finderIT).parentElement);
+
         setSentMessageDiv(messageToSend);
 
         $(".messageInput").val("");
@@ -641,7 +652,7 @@ async function setSentMessageDiv(messageToSend,sentTimeString) {
     let mainChatDiv = document.createElement("div");
     mainChatDiv.classList.add("msg-dateTime");
     mainChatDiv.classList.add("rounded");
-    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleString()
+    let timeToPrint = sentTimeString !== undefined ? sentTimeString : new Date().toLocaleTimeString()
     mainChatDiv.textContent = `${timeToPrint}`;
 
     chatPane.append(mainChatDiv);

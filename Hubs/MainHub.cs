@@ -61,7 +61,7 @@ namespace SignalRChatApp.Hubs
                     SentTime = DateTime.Now,
                     ReceiverId = groupId.ToString(),
                     Text = message,
-                    IsPending = true,
+                    IsPending = false,
                     IsGroupMessage = true,
                     GroupId = groupId
                 };

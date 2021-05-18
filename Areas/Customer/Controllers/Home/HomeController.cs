@@ -206,7 +206,7 @@ namespace SignalRChatApp.Controllers
             }
 
             ViewBag.myGroups = myGroups;
-                
+
 
             return View(FriendUser);
         }
@@ -236,7 +236,7 @@ namespace SignalRChatApp.Controllers
                 {
                     groupId = x.GroupId,
                     text = x.Text,
-                    sentTime = x.SentTime,
+                    sentTime = x.SentTime.ToString("F"),
                     senderId = x.SenderId,
                     senderChatName = _userManager.FindByIdAsync(x.SenderId).Result.ChatName
                 })
@@ -350,9 +350,12 @@ namespace SignalRChatApp.Controllers
                 var friendId =  _userManager.FindByEmailAsync(friendEmail).Result.Id;
 
                 //check if he is already my friend
-                int friendsListCount = _db.Friends.Where(
-                    u => u.MyId == myUserId && u.FriendId == friendId || (u.FriendId == myUserId && u.MyId == friendId)
-                    ).ToList().Count;
+                int friendsListCount = await Task.Run(() =>
+               {
+                   return _db.Friends.Where(
+                   u => u.MyId == myUserId && u.FriendId == friendId || (u.FriendId == myUserId && u.MyId == friendId)
+                   ).ToList().Count;
+               });
 
                 if (friendsListCount > 0)
                 {
