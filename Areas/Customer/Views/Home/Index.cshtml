@@ -34,7 +34,7 @@
                 </div>
 
                 <div>
-                    <ul class="list-group">
+                    <ul id="friend-gr-list-ul" class="list-group">
                         @foreach (var item in Model)
                         {
                         <li id="Id_@item.Id" onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">

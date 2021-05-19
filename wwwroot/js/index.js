@@ -5,6 +5,26 @@ var currentChatWithGroup = false;
 var connection;
 
 $().ready(function () {
+    var intFunc = setInterval(function () {
+        $(".modal").show();
+        $("body").addClass("loading");
+    },1);
+    $.ajax({
+        type: "GET",
+        url: "Customer/Home/GetRecentOrder",
+        success: function (resp) {
+            $(".modal").hide();
+            $("body").removeClass("loading");
+            
+            for (var i = resp.recentOrder.length -1 ; i >= 0; i--) {
+                if (resp.recentOrder[i] !== "") {
+                    $("#friend-gr-list-ul").prepend($(`#${resp.recentOrder[i]}`));
+                }
+            }
+
+            clearInterval(intFunc);
+        }
+    })
 
     //Create Group
 

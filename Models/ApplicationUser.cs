@@ -18,5 +18,7 @@ namespace SignalRChatApp.Models
         public string ProfileImage { get; set; }
 
         public bool IsOnline { get; set; }
+
+        public string RecentOrder { get; set; }
     }
 }

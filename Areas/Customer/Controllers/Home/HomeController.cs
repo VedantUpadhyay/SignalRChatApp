@@ -163,7 +163,16 @@ namespace SignalRChatApp.Controllers
             return View(groupVM);
         }
 
+        [HttpGet]
+        public IActionResult GetRecentOrder()
+        {
 
+            return Json(new
+            {
+                recentOrder = _userManager.GetUserAsync(User).Result.RecentOrder.Split(",").ToList()
+            });
+            
+        }
         public IActionResult Index()
         {
             var myId = User.FindFirstValue(ClaimTypes.NameIdentifier);

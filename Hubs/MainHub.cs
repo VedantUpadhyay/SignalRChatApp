@@ -48,11 +48,38 @@ namespace SignalRChatApp.Hubs
         }
 
 
-        public void SendGroupMessage(int groupId, string message)
+        public async Task SendGroupMessage(int groupId, string message)
         {
             string myId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string senderEmail = Context.User.Identity.Name;
             string senderChatName = _userManager.GetUserAsync(Context.User).Result.ChatName;
+
+
+            var MyrecentOrder = await _db.ApplicationUsers.FindAsync(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            List<string> OrderList;
+
+            //updating Recent Chat Order
+            OrderList = MyrecentOrder.RecentOrder.Split(",").ToList();
+            OrderList.Remove($"GId_{groupId}");
+            OrderList.Insert(0, $"GId_{groupId}");
+
+            MyrecentOrder.RecentOrder = string.Join(",", OrderList);
+            await _db.SaveChangesAsync();
+
+            foreach (var item in _db.GroupMembers.Where(g => g.GroupId == groupId && g.UserId != myId).ToList())
+            {
+                var recentOrders = await _db.ApplicationUsers.FindAsync(item.UserId);
+                List<string> MyOrderList;
+
+                //updating Recent Chat Order
+                MyOrderList = recentOrders.RecentOrder.Split(",").ToList();
+                MyOrderList.Remove($"GId_{groupId}");
+                MyOrderList.Insert(0, $"GId_{groupId}");
+
+                recentOrders.RecentOrder = string.Join(",", OrderList);
+                await _db.SaveChangesAsync();
+            }
+
             try
             {
                 var messageModel = new Messages
@@ -78,7 +105,7 @@ namespace SignalRChatApp.Hubs
                    // if (_onlineUsersManager.onlineUsers.Contains(item.UserId) && item.UserId != myId)
                    // {
 
-                       Clients.User(item.UserId).SendAsync("ReceiveGroupMessage", senderChatName,senderEmail, message,groupId);
+                      await Clients.User(item.UserId).SendAsync("ReceiveGroupMessage", senderChatName,senderEmail, message,groupId);
                         
                    // }
                 }
@@ -91,12 +118,38 @@ namespace SignalRChatApp.Hubs
 
         }
 
-        public string SendMessage(string RecvUser,string message)
+        public async Task<string> SendMessage(string RecvUser,string message)
         {
             
 
             var senderEmail = Context.User.Identity.Name;
             var recvId = _userManager.FindByEmailAsync(RecvUser).Result.Id;
+
+
+            var MyrecentOrder = await _db.ApplicationUsers.FindAsync(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            List<string> OrderList;
+
+            //updating Recent Chat Order
+            OrderList = MyrecentOrder.RecentOrder.Split(",").ToList();
+            OrderList.Remove($"Id_{recvId}");
+            OrderList.Insert(0, $"Id_{recvId}");
+
+            MyrecentOrder.RecentOrder = string.Join(",", OrderList);
+            await _db.SaveChangesAsync();
+
+
+            var recentOrders = await _db.ApplicationUsers.FindAsync(recvId);
+            List<string> MyOrderList;
+            var recentSenderId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //updating Recent Chat Order
+            MyOrderList = recentOrders.RecentOrder.Split(",").ToList();
+            MyOrderList.Remove($"Id_{recentSenderId}");
+            MyOrderList.Insert(0, $"Id_{recentSenderId}");
+
+            recentOrders.RecentOrder = string.Join(",", MyOrderList);
+            await _db.SaveChangesAsync();
+
+
             try
             {
                 var messageModel = new Messages
@@ -117,7 +170,7 @@ namespace SignalRChatApp.Hubs
                     
 
 
-                    Clients.User(recvId).SendAsync("ReceiveMessage", senderEmail,message);
+                    await Clients.User(recvId).SendAsync("ReceiveMessage", senderEmail,message);
                     return DateTime.Now.ToShortTimeString();
                 }
 
