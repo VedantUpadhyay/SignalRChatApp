@@ -3,8 +3,15 @@
 var currentChatWithGroup = false;
 
 var connection;
-
+function openNav() {
+    document.getElementById("friends-pane").style.width = "250px";
+}
+function closeNav() {
+    document.getElementById("friends-pane").style.width = "0";
+}
 $().ready(function () {
+    
+
     var intFunc = setInterval(function () {
         $(".modal").show();
         $("body").addClass("loading");
@@ -327,6 +334,7 @@ function fillGroupChatArea(myMessages) {
 
 //Group Chat
 function openChatGroup(groupName, groupId) {
+    closeNav();
     currentChatWithGroup = true;
     //changing Winow title
     document.title = `${groupName.toUpperCase()} - Chat`;
@@ -462,6 +470,7 @@ function openChatGroup(groupName, groupId) {
 
 //All ::Chatsettings here
 function openChat(chatName, chatEmail) {
+    closeNav();
     currentChatWithGroup = false;
     //changing Winow title
     document.title = `${chatName.toUpperCase()} - Chat`;

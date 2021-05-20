@@ -14,123 +14,130 @@
     Left Pane holds the Friends
     Right Pane(bigger width holds the selected Friends.)
     -->
+
+<span style="position:fixed;z-index:650;left:0;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Friends</span>
+
 <div>
     <div style="display:inline-flex;height: 85vh;overflow:auto">
         <!--User Pane-->
         <div id="friends-pane">
             <!--Friends List-->
             <div id="friends-list">
-                <!--
-            @{
-                var userImg = @"/Images/" + User.Identity.Name + ".jpg";
-            }
-            <img src=@userImg class="rounded-circle" width="30%" height="35%"/>
-                -->
-                <input id="userSearch" type="text" placeholder="Search a User"><span><i class="fas fa-search icon"></i></span>
-                <ul id="user-search-list" class="list-group">
-                </ul>
-                <div class="fr-gr-title">
-                    <span class="title">Friends & Groups</span>
-                </div>
-
-                <div>
-                    <ul id="friend-gr-list-ul" class="list-group">
-                        @foreach (var item in Model)
-                        {
-                        <li id="Id_@item.Id" onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">
-                            <img class="rounded-circle" src="@item.ProfileImage" />
-                            @{
-                                string statusClass = string.Empty;
-
-                                if (item.IsOnline)
-                                {
-                                    statusClass = "status-circle status-online";
-                                }
-                                else
-                                {
-                                    statusClass = "status-circle";
-                                }
-                            }
-                            <span id="@item.Email.Replace("@","_")" class="@statusClass">
-                            </span>
-                            @item.ChatName
-
-                            @{
-                                var pendingMsgId = string.Empty;
-                                pendingMsgId = item.Email.Replace("@", "_") + "-pm";
-                            }
-
-                            @*
-        Logic to get Pending Messages at Runtime..
-                            *@
-
-                            @{
-
-                                string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                                string frId = item.Id;
-                                int pendingMsgCount = _db.Messages
-                                    .Where(
-                                        u => u.SenderId == frId && u.ReceiverId == myId && u.IsPending == true
-                                    )
-                                    .ToList()
-                                    .Count;
-
-                            }
-                            @if (pendingMsgCount > 0)
-                            {
-                                <span style="padding:0.33rem" id="@pendingMsgId" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
-                            }
-                            else
-                            {
-                                <span id="@pendingMsgId" class="floating-pending-msg rounded-circle"></span>
-                            }
-                        </li>
-                        }
-                        <!--Groups-->
-                        @foreach (var item in ((List<Groups>)ViewBag.myGroups))
-                        {
-                    <li id="GId_@item.GroupId" onclick="openChatGroup('@item.GroupName','@item.GroupId')" class="rounded-pill friend-card list-group-item-light">
-                        <img class="rounded-circle" src="@item.GroupImage" />
-                       
-                        @item.GroupName
-
-                        @{
-                            int pendingMsgId = item.GroupId;
-                        }
-
-                        @*
-        Logic to get Pending Messages at Runtime..
-                        *@
-
-                        @{
-
-                           int pendingMsgCount = _db.GroupMembers.
-                                Where(g => g.GroupId == item.GroupId && g.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)).First().PendingMessageCount;
-
-                        }
-                        
-                        @if (pendingMsgCount > 0)
-                        {
-                            <span style="padding:0.33rem" id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
-                        }
-                        else
-                        {
-                            <span id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle"></span>
-                        }
-                            
-                    </li>
-                        }
-
-
+                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                <nav id="my-menu">
+                    <!--
+        @{
+            var userImg = @"/Images/" + User.Identity.Name + ".jpg";
+        }
+        <img src=@userImg class="rounded-circle" width="30%" height="35%"/>
+            -->
+                    <input id="userSearch" type="text" placeholder="Search a User"><span><i class="fas fa-search icon"></i></span>
+                    <ul id="user-search-list" class="list-group">
                     </ul>
-                </div>
+                    <div class="fr-gr-title">
+                        <span class="title">Friends & Groups</span>
+                    </div>
 
+                    <div>
+                        <ul id="friend-gr-list-ul" class="list-group">
+                            @foreach (var item in Model)
+                            {
+                                <li id="Id_@item.Id" onclick="openChat('@item.ChatName','@item.Email',false)" class="rounded-pill friend-card list-group-item-light">
+                                    <img class="rounded-circle" src="@item.ProfileImage" />
+                                    @{
+                                        string statusClass = string.Empty;
+
+                                        if (item.IsOnline)
+                                        {
+                                            statusClass = "status-circle status-online";
+                                        }
+                                        else
+                                        {
+                                            statusClass = "status-circle";
+                                        }
+                                    }
+                                    <span id="@item.Email.Replace("@","_")" class="@statusClass">
+                                    </span>
+                                    @item.ChatName
+
+                                    @{
+                                        var pendingMsgId = string.Empty;
+                                        pendingMsgId = item.Email.Replace("@", "_") + "-pm";
+                                    }
+
+                                    @*
+                            Logic to get Pending Messages at Runtime..
+                                    *@
+
+                                    @{
+
+                                        string myId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                                        string frId = item.Id;
+                                        int pendingMsgCount = _db.Messages
+                                            .Where(
+                                                u => u.SenderId == frId && u.ReceiverId == myId && u.IsPending == true
+                                            )
+                                            .ToList()
+                                            .Count;
+
+                                    }
+                                    @if (pendingMsgCount > 0)
+                                    {
+                                        <span style="padding:0.33rem" id="@pendingMsgId" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
+                                    }
+                                    else
+                                    {
+                                        <span id="@pendingMsgId" class="floating-pending-msg rounded-circle"></span>
+                                    }
+                                </li>
+                            }
+                            <!--Groups-->
+                            @foreach (var item in ((List<Groups>)ViewBag.myGroups))
+                            {
+                                <li id="GId_@item.GroupId" onclick="openChatGroup('@item.GroupName','@item.GroupId')" class="rounded-pill friend-card list-group-item-light">
+                                    <img class="rounded-circle" src="@item.GroupImage" />
+
+                                    @item.GroupName
+
+                                    @{
+                                        int pendingMsgId = item.GroupId;
+                                    }
+
+                                    @*
+                            Logic to get Pending Messages at Runtime..
+                                    *@
+
+                                    @{
+
+                                        int pendingMsgCount = _db.GroupMembers.
+                                             Where(g => g.GroupId == item.GroupId && g.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)).First().PendingMessageCount;
+
+                                    }
+
+                                    @if (pendingMsgCount > 0)
+                                    {
+                                        <span style="padding:0.33rem" id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle">@pendingMsgCount</span>
+                                    }
+                                    else
+                                    {
+                                        <span id="@pendingMsgId-pm" class="floating-pending-msg rounded-circle"></span>
+                                    }
+
+                                </li>
+                            }
+
+
+                        </ul>
+                    </div>
+                </nav>
             </div>
+        
+       
         </div>
 
         <!--Chat Pane-->
         <div id="chat-pane">
-
+            <h1>No Chat Selected..</h1>
         </div>
     </div>
 </div>
@@ -144,6 +151,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/mmenu-light.js"></script>
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/index.js" defer></script>
 }
