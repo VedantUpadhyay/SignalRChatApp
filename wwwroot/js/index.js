@@ -5,9 +5,11 @@ var currentChatWithGroup = false;
 var connection;
 function openNav() {
     document.getElementById("friends-pane").style.width = "250px";
+    document.getElementById("friends-pane").style.padding = "1rem";
 }
 function closeNav() {
     document.getElementById("friends-pane").style.width = "0";
+    document.getElementById("friends-pane").style.padding = "0";
 }
 $().ready(function () {
     
@@ -65,6 +67,14 @@ $().ready(function () {
 
     connection.on("ReceiveGroupMessage", function (senderChatName, senderEmail, message, groupId) {
         console.log("grp Received..");
+        let recvGrpId = `GId_${groupId}`;
+
+        toastr.options = {
+            "closeButton": true,
+            "newestOnTop": true
+        }
+
+        toastr.info(`${senderChatName} sent a message in ${$("#" + recvGrpId).text().match(/[a-zA-Z]+/g)}`);
 
         $(`#${groupId}-pm`).parent().parent().prepend($(`#${groupId}-pm`).parent());
 
@@ -137,6 +147,15 @@ $().ready(function () {
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
+        toastr.options = {
+            "closeButton": true,
+            "newestOnTop": true
+        }
+        let senEm = senderEmail.replace("@", "_");
+        let senderChatName = document.getElementById(senEm).parentElement.innerText.match(/[a-zA-Z]+/g);
+
+        toastr.info(`${senderChatName} sent a message.`);
+
         var finderIT = senderEmail.replace("@", "_") + "-pm";
         console.log(finderIT);
         document.getElementById(finderIT).parentElement.parentElement.prepend(document.getElementById(finderIT).parentElement);

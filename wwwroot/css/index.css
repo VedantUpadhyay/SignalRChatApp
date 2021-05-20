@@ -139,9 +139,10 @@
 }
 
 #friends-pane .closebtn {
+    text-decoration:none;
     position: absolute;
-    top: -75px;
-    right: 25px;
+    top: -30px;
+    right: 0px;
     font-size: 36px;
     margin-left: 50px;
 }
@@ -278,7 +279,7 @@
 
 .messageInput {
     height: 100%;
-    min-width:92%;
+    width:95%;
     max-width: 95%;
     border: none;
     overflow: auto;
