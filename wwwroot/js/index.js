@@ -1,17 +1,25 @@
 ﻿"use strict";
 
 var currentChatWithGroup = false;
-
+var blinkingFunc;
 var connection;
+
+
 function openNav() {
-    document.getElementById("friends-pane").style.width = "250px";
+    clearInterval(blinkingFunc);
+    document.getElementById("friends-pane").style.minWidth = "25%";
+    document.getElementById("friends-pane").style.width = "25%";
     document.getElementById("friends-pane").style.padding = "1rem";
 }
 function closeNav() {
+    clearInterval(blinkingFunc);
     document.getElementById("friends-pane").style.width = "0";
+    document.getElementById("friends-pane").style.minWidth = "0";
     document.getElementById("friends-pane").style.padding = "0";
 }
+
 $().ready(function () {
+    
     
 
     var intFunc = setInterval(function () {
@@ -67,6 +75,13 @@ $().ready(function () {
 
     connection.on("ReceiveGroupMessage", function (senderChatName, senderEmail, message, groupId) {
         console.log("grp Received..");
+
+        blinkingFunc = setInterval(function () {
+            $('#drawOpener').fadeOut(500);
+            $('#drawOpener').fadeIn(500);
+        }, 1000);
+        
+
         let recvGrpId = `GId_${groupId}`;
 
         toastr.options = {
@@ -147,6 +162,12 @@ $().ready(function () {
 
     connection.on("ReceiveMessage", function (senderEmail, message) {
         console.log("Received..");
+
+        blinkingFunc = setInterval(function () {
+            $('#drawOpener').fadeOut(500);
+            $('#drawOpener').fadeIn(500);
+        }, 1000);
+
         toastr.options = {
             "closeButton": true,
             "newestOnTop": true
