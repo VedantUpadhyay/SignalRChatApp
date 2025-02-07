@@ -1,10 +1,10 @@
 *SignalR Based Real - time  Chat Application*
 
 
-It's a Real Time Chat app  which allows " - 
+It's a Real Time Chat app  which allows - 
  - Users to Register themselves
  - Find & Add friends. 
- - Back-Up option , so users can view the pending messages.
+ - Back-Up option, so users can view the pending messages.
  - Technologies used : -
 	 -  Front-end : - 
 		 - Bootstrap v4, CSS, HTML, JQuery and Vanilla JavaScript.
